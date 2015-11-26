@@ -1,0 +1,222 @@
+package Laberinto;
+
+import EstrucurasDeDatos.Pila;
+import Otros.Direcciones;
+import Otros.Llave;
+import Robot.RobotDropeador;
+import Robot.RobotRecogedor;
+import Robot.Robots;
+import Laberinto.SalaConPuerta;
+
+
+public class Laberinto {
+
+	private Sala [][] SalasLab;
+	
+	/* Puntero a la sala de la puerta para acceder a ella más fácilmente*/
+	private SalaConPuerta salaPuerta;
+	
+	
+	private int maxColumnas;
+	private int maxFilas;
+	private int maxTurnos;
+	private int turnoLaberinto;
+	
+	public Laberinto () {
+		
+		maxFilas = 3;
+		maxColumnas = 5;
+		maxTurnos = 20;
+		turnoLaberinto = 0;
+		SalasLab  = new Sala[maxFilas][maxColumnas];
+		
+		int aux;
+		
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j< maxColumnas; j++) {
+				
+				if(i == maxFilas -1 && j == maxColumnas -1) {
+					
+					Llave llaveroConfiguracion[] = {new Llave(1), new Llave(3), new Llave(5), new Llave(7), new Llave(9), new Llave(11),
+							   new Llave(13), new Llave(15), new Llave(17), new Llave(19), new Llave(21), new Llave(23),
+							   new Llave(25), new Llave(27), new Llave(29)};
+					
+					SalasLab[i][j] = new SalaConPuerta(llaveroConfiguracion,15,15,15);
+					salaPuerta = (SalaConPuerta) SalasLab[i][j];
+				}
+				
+				else {
+					
+					SalasLab[i][j] = new Sala();
+				}
+				
+				aux = matrizAVector(i, j);
+				SalasLab[i][j].setIdSala(aux);
+			}			
+		}
+		
+		RobotRecogedor Bender = new RobotRecogedor('B',"Bender", 0, 0);
+		SalasLab[0][0].robotEntra(Bender);
+		RobotRecogedor Paco = new RobotRecogedor('B',"Paco",1, 1);
+		SalasLab[1][1].robotEntra(Paco);
+		
+		
+//		RobotDropeador Asimo = new RobotDropeador('A', "Asimo", 2,2);
+//		SalasLab[2][2].robotEntra(Asimo);
+		
+		
+		distribuirLlaves();
+	}
+	
+	private int matrizAVector(int filas, int columnas) {
+		
+		return (filas * maxColumnas) + columnas;
+	}
+	
+	private void distribuirLlaves() {
+		
+		int[] idSalasConLlave = {3, 4, 6, 8, 9, 10, 11, 12, 13};
+		int llavesPorSala = 45/idSalasConLlave.length;
+		int pIn = 0;
+		int pFin = llavesPorSala;
+		int llaveActual = 0;
+		
+		boolean incrementoImpar = false;
+		
+		for (int k = 0; k < idSalasConLlave.length; k++) {
+			
+			int aux = idSalasConLlave[k];
+
+				for (int i = pIn; i < pFin; i++) {
+					
+					Llave llaux = new Llave(llaveActual);
+					SalasLab[aux/maxColumnas][aux%maxColumnas].repartirLlavesOrdenSala(llaux);
+					
+					if(llaveActual % 2 == 0 || incrementoImpar) {
+						
+						llaveActual++;
+						incrementoImpar = false;
+					}
+					
+					else {
+						
+						incrementoImpar = true;
+					}
+				}	
+				
+				pIn = pFin;
+				pFin += llavesPorSala;
+
+		}
+	}	
+
+	public void mostrarLlavesRestantes() {
+		
+		System.out.println("Llave: ");
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j< maxColumnas; j++) {
+							
+				System.out.println("Sala: " + SalasLab[i][j].getIdSala());
+				
+				while(!SalasLab[i][j].llaveroVacio()) {
+					
+					System.out.println("Llave: "+ SalasLab[i][j].recogerLlaveSala().getIdLlave());
+				}
+			}
+		}
+	}	
+
+	private void moverRobotLaberinto() {
+		
+		Robots robotAux;
+		boolean hayRobot;
+		
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j< maxColumnas; j++) {
+				
+				hayRobot = false;	
+				
+				if (SalasLab[i][j].hayRobot()){
+					
+					hayRobot = true;
+					robotAux = SalasLab[i][j].mostrarRobot();				
+				
+					while(hayRobot && robotAux.getTurnoRobot() == turnoLaberinto) {
+						
+						robotAux.robotHaceSusCosas(this);
+						robotAux.incrementarTurno();
+					
+						hayRobot = false;
+					
+						if (SalasLab[i][j].hayRobot()) {
+						
+							hayRobot = true;
+							robotAux = SalasLab[i][j].mostrarRobot();
+						}											
+					}
+				}				
+			}	
+		}
+	}
+	
+	
+	
+	public void dondeEsta() {
+		
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j< maxColumnas; j++) {
+				
+				System.out.println("Sala " + i +"---" + j);
+				
+				if(SalasLab[i][j].hayRobot()) {
+					
+					System.out.println("Esta el robot: " + SalasLab[i][j].robotSale().getNombre());
+				}
+				
+				else {
+					
+					System.out.println("No hay robots.");
+				}
+			}
+		}
+	}
+	
+	public void gestorDeTurnos() {
+		
+		while(turnoLaberinto < maxTurnos && !salaPuerta.esPuertaAbierta()) {
+			
+			moverRobotLaberinto();
+			turnoLaberinto++;
+		}
+		
+		if (turnoLaberinto == maxTurnos) {
+			
+			System.out.println ("La simulacion ha acabado agotandose los turnos");
+		}
+		
+		else {
+			
+			System.out.println ("La simulacion ha acabado abriendose la puerta");
+		}
+	}
+	
+	public int getMaxColumnas() {
+		
+		return maxColumnas;
+	}
+	
+	public int getMaxFilas() {
+		
+		return maxFilas;
+	}
+	
+	public Sala devovlerSala(int x, int y ) {
+		
+		return SalasLab[x][y];
+	}
+		
+}

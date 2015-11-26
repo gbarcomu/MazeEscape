@@ -1,0 +1,20 @@
+/**
+* Implementación de la clase Sonny
+* @version 2.0
+* @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+* Asignatura Desarrollo de Programas<br/>
+* Curso 14/15
+* Nombre grupo: IngenierosEnProcesión
+* Numero de entrega: EC2
+*/
+package Robot;
+
+
+public class Sonny extends RobotRecogedor {
+	/** Constructor parametrizado de la clase Sonny que establece el nombre, el identificador y las direcciones a seguir.*/
+	public Sonny (String nombre,char marca,int x, int y, int turno) {
+		
+		super (nombre, x, y, turno);
+		super.idRobot = marca;
+	}
+}

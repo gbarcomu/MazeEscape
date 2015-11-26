@@ -1,0 +1,40 @@
+package Robot;
+
+import Otros.Llave;
+
+
+public class RobotDropeador extends Robots{
+	
+	public RobotDropeador (char ID, String nombre) {
+		
+		super(nombre);
+		
+		if (ID == 'A') {
+			
+			super.idRobot = ID;
+		}
+		
+		else {
+			
+			super.idRobot = '0';
+		}
+	}
+	
+	public void interactuarPuerta () {
+		
+		System.out.println("El robot" + super.nombreRobot + "de tipo" + super.idRobot + 
+				"ha intentado cerrar la puerta");
+	}
+
+	public void interactuarLlave (Llave llaveAux) {
+		
+		System.out.println("El robot" + super.nombreRobot + "de tipo" + super.idRobot + 
+				"ha dejado una llave");
+		
+		if (!llavero.esVacia()) {
+			
+			llavero.desapilar();
+		}
+	}
+
+}

@@ -1,0 +1,344 @@
+package EstrucurasDeDatos;
+ /**
+ * Impñementacion de la clase Lista
+ * @version 1.0
+ * @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+ * Asignatura Desarrollo de Programas<br/>
+ * Curso 14/15
+ * Nombre grupo: IngenierosEnProcesion
+ * Numero de entrega: EC1
+ */
+public class Lista <T> {
+	
+	/** Puntero al primer elemento de la Lista*/
+	private Nodo primero;
+	/** Puntero al ultmio elemento de la Lista*/
+	private Nodo ultimo;
+	/** Tamaño de la Lista*/
+	Integer size = 0;
+		
+	public class Nodo {
+		/** Dato almacenado en cada nodo */
+		private T dato;
+		/** Enlace al siguiente elemento */
+		private Nodo siguiente;
+		/** Enlace al anterior elemento */
+		private Nodo anterior;
+		
+		public Nodo(Nodo anterior, T dato, Nodo siguiente) {
+			
+			this.dato = dato;
+			this.siguiente = siguiente;
+			this.anterior = anterior;
+		}
+		
+		public Nodo(T dato) {
+			
+			this.dato = dato;
+		}
+		
+		/**
+    	 * Metodo que devuelve el anterior nodo de la Lista (para recorridos con la lista)
+    	 *
+    	 * @return el elemento anterior
+    	 */
+		public Nodo anterior() {
+			
+			return anterior;
+		}
+		/**
+    	 * Metodo que devuelve el siguiente nodo de la Lista (para recorridos con la lista)
+    	 * @return el elemento siguiente
+    	 */
+		public Nodo siguiente() {
+			
+			return siguiente;
+		}
+		/**
+    	 * Metodo para consultar un Dato
+    	 *
+    	 * @return el Dato contenido en el nodo actual
+    	 */ 
+		public T get() {
+			
+			return dato;
+		}
+	}//class nodo
+	
+	private Nodo inicio = null;
+	private Nodo fin = null;
+	private Nodo pI = null;
+
+		/** 
+		 * Metodo que comprueba si la lista esta vacia o no
+		 * @return true si esta vacia o false en caso contrario
+		 */
+		public boolean estaVacia() {
+			
+			return (inicio == null);
+		}
+		/** Metodo que mueve el punto de interes al inicio.*/
+		public void moverInicio() {
+			
+			pI = inicio;
+		}
+		/** Metodo que mueve el punto de interes al final*/
+		public void moverFinal() {
+			
+			pI = fin;
+		}
+		/**Coloca el PI apuntando al siguiente elemento de la lista.*/
+		public void avanzar() {
+			
+			if(pI != null) {
+				
+				pI = pI.siguiente;
+			}
+		}
+		/**Coloca el PI apuntando al anterior elemento de la lista*/
+		public void retroceder() {
+			
+			if(pI != inicio) {
+				
+				if(pI != null) {
+					
+					pI = pI.anterior;
+				}
+				
+				else{
+					
+					pI = fin;
+				}
+			}
+		}
+		/** Metodo boleano que devuelve verdadero si el punto de interes esta al inicio de la lista.*/
+		public boolean enInicio() {
+			
+			return(pI == inicio);
+		}
+		/** Metodo boleano que devuelve verdadero si el punto de interes esta al final de la lista  */
+		public boolean enFin() {
+			
+			return(pI == fin);
+		}
+		/** Metodo boleano que devuelve verdadero si estamos al final de la lista.*/
+		public boolean finLista() {
+			
+			return(pI == null);
+		}
+		/** Metodo que nos permite consultar un dato de la lista.*/
+		public void consultar(T dato) {
+			
+			if(pI != null) {
+				
+				dato = pI.dato;
+			}
+		}
+		/** Metodo que nos permite insertar un elemento en la lista.*/
+		public void insertar(T dato) {
+			
+			Nodo nuevoNodo = new Nodo(dato);
+			
+			if(pI == null) {
+				
+				if(estaVacia()) {
+					
+					nuevoNodo.siguiente = pI;
+					inicio = nuevoNodo;
+					fin = nuevoNodo;
+				}
+				
+				else {//pi apunta al elemento siguiente al final:el nodo se inserta al final
+					
+					nuevoNodo.anterior = fin;
+					fin.siguiente = nuevoNodo;
+					fin = nuevoNodo;
+				}
+			}
+			
+			else {
+				
+				if(pI.anterior ==  null) {//insercion el primero de la lista
+					
+					inicio = nuevoNodo;
+					nuevoNodo.siguiente = pI;
+					nuevoNodo.anterior = null;
+					pI.anterior = nuevoNodo;
+				}
+				
+				else {//insercion en posicion intermedia
+					
+					nuevoNodo.anterior = pI.anterior;
+					nuevoNodo.siguiente = pI;
+					(pI.anterior).siguiente = nuevoNodo;
+					pI.anterior = nuevoNodo;
+				}
+			}
+			pI = nuevoNodo;//Pi apunta al nuevo nodo insertado
+		}
+		/** Metodo que nos permite borrar un elemento de la lista.*/
+		public void borrar() {
+			
+			Nodo nuevoNodo;
+			
+			if(!estaVacia() && !finLista()) {
+				
+				nuevoNodo = pI;
+				
+				if(pI == inicio) {//el nodo a borrar es el primero
+					
+					inicio = inicio.siguiente;
+				}
+				
+				if(pI == fin) {//es el ultimo
+					
+					fin = fin.anterior;
+				}
+				
+				pI = pI.siguiente;//apunta al siguiente
+				
+				if(nuevoNodo.anterior != null) {
+					
+					(nuevoNodo.anterior).siguiente = pI;
+				}
+				
+				if(nuevoNodo.siguiente != null) {
+					
+					pI.anterior = nuevoNodo.anterior;
+				}
+			}
+		}
+
+	/** 
+	 * Metodo que devuelve el elemento del inicio de la lista
+	 * @return el primer elemento
+	 */
+	public T primero() {
+		
+		return primero.dato;
+	}
+	/** 
+	 * Metodo que devuelve el elemento del final de la lista
+	 * @return el ultimo elemento
+	 */
+	public T ultimo() {
+		
+		return ultimo.dato;
+	}
+	
+	/** 
+	 * Metodo que devuelve el inicio(Nodo) de la lista
+	 * @return primero
+	 */
+	public Nodo nodoPrimero() {
+		
+		return primero;
+	}
+	
+	/** 
+	 * Metodo que devuelve el final  de la lista
+	 * @return ultimo
+	 */
+	public Nodo nodoUltimo() {
+		
+		return ultimo;
+	}
+	
+	
+	
+	/** 
+	 * Metodo para comprobar el tamaño de la lista
+	 * @return size tamaño de la lista
+	 */
+	public Integer size() {
+		
+		return size;
+	}
+	
+	/**
+	 * Metodo para consultar un dato almacenado en una posicion
+	 * @return el dato contenido en el nodo que está en la posición pos de la lista
+	 */
+	public T obtenerDato(Integer posicion) {
+		T dat = null;
+		Nodo aux = primero;
+		Integer i = 0;
+		boolean encontrado = false;
+		
+		while(i <= posicion && !encontrado && aux != null) {
+			
+			if(i == posicion) {
+				
+				encontrado = true;
+				dat = aux.dato;
+			}
+			
+			i++;
+			aux = aux.siguiente;
+		}
+		
+		return dat;
+	}
+	
+	/**
+	 * Permite insertar al final de la lista
+	 * @param dato valor que se va a insertar
+	 */
+	public void insertarFinal(T dato) {
+		
+		Nodo ult = ultimo;
+		Nodo aux = new Nodo (ult, dato, null);
+		ultimo = aux;
+		
+		if( ult == null) {
+			
+			primero = aux;
+		}
+		
+		else{
+			
+			ult.siguiente = aux;
+		}
+		
+		size ++;
+	}
+	
+	/**
+	 * Permite eliminar el último elemento de la Lista
+	 *
+	 */
+	public void borrarUltimo() {
+		//implementacion
+		if(ultimo != null) {
+			
+			ultimo = ultimo.anterior();
+		}
+		//no hay elementos
+		if ( ultimo == null) {
+			
+			primero = null;
+		}
+		
+		else {
+			
+			ultimo.siguiente = null;
+		}
+		
+		size --;			
+	}
+	///////////////////////////////////////////
+	/**
+	 * Permite eliminar el primer elemento de la Lista
+	 *
+	 */
+	public void borrarPrimero() {
+		
+		if(primero != null) {
+			
+			primero = primero.siguiente();
+		}
+		size--;
+	}
+	
+	
+}

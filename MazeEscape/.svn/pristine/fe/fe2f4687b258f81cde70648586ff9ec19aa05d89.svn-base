@@ -1,0 +1,12 @@
+ /**
+ * Implementación de la clase Direcciones
+ * @version 2.0
+ * @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+ * Asignatura Desarrollo de Programas<br/>
+ * Curso 14/15
+ * Nombre grupo: IngenierosEnProcesión
+ * Numero de entrega: EC2
+ */
+package Otros;
+/** Enum que establece los parametros de direcciones.*/
+public enum Direcciones {N,O,S,E}

@@ -1,0 +1,12 @@
+package Robot;
+
+import Otros.Direcciones;
+
+public class Spirit extends RobotRecogedor {
+
+	public Spirit (String nombre, Direcciones[] direcciones, int maxFil) {
+		
+		super (nombre, maxFil, 0, direcciones);
+		super.idRobot = 'P';
+	}
+}

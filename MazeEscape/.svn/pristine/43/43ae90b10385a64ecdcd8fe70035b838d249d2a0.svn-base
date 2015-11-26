@@ -1,0 +1,157 @@
+ /**
+ * Impñementacion de la clase Puerta
+ * @version 1.0
+ * @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+ * Asignatura Desarrollo de Programas<br/>
+ * Curso 14/15
+ * Nombre grupo: IngenierosEnProcesion
+ * Numero de entrega: EC1
+ */
+public class Puerta {
+	/** Boleano que indica el estado de la puerta. 
+	 * Devuelve verdadero si esta abierta y falso en caso contrario. 
+	 */
+	private boolean puertaAbierta;
+	/** Boleano que indica el estado de la puerta. 
+	 * Devuelve verdadero si esta configurada y falso en caso contrario. 
+	 */
+	private boolean puertaConfigurada;
+	/** Entero que nos permite almacenar la profundidad minima del arbol para que se abra la puerta.*/
+	private int profundidadApertura;
+	/** Entero que nos permite almacenar los nodos minimos que deben quedar en el arbol para que se abra la puerta*/
+	private int nodosMinimosApertura;
+	/** Arbol binario de busqueda que contine las llaves disponibles para abrir la cerradura.*/
+	private Arbol llavesCerradura;
+	/** Arbol binario de busqueda que contiene las llaves que vamos probando para abrir la cerradira.*/
+	private Arbol llavesProbadas;
+	/** Constructor por defecto de la clase puerta que inicializa puertaConfigurada a false.*/
+	Puerta () {
+		
+		puertaConfigurada = false;		
+	}
+	/** Contructor parametrizado de la clase puerta que configura el estado de la puerta.*/
+	Puerta (Llave codigoPuerta[], int numElementos) {
+		
+		puertaConfigurada = true;
+		puertaAbierta = false;
+		
+		nodosMinimosApertura = 0;
+		profundidadApertura = 0;
+		
+		llavesCerradura = new Arbol();
+		llavesProbadas = new Arbol();
+		
+		algoritmoConfiguracionPuerta(0, numElementos - 1, codigoPuerta);
+	}
+	/** Metodo encargado de configurar la puerta.*/
+	private void algoritmoConfiguracionPuerta(int primero, int ultimo, Llave codigoPuerta[]) {
+		
+		int aux = puntoMedio(primero,ultimo);
+		
+		llavesCerradura.insertar(codigoPuerta[aux]);	
+		
+		if (primero != ultimo) {
+						
+			algoritmoConfiguracionPuerta(primero, aux - 1, codigoPuerta);		
+			algoritmoConfiguracionPuerta(aux + 1, ultimo, codigoPuerta);
+		}	 
+	}
+	/** Metodo que calcula el punto medio del array para hacer la insercion en el arbol correctamente.
+	 * @return el valor entero de la division. */
+	private int puntoMedio (int primero, int ultimo) {
+		
+		return (ultimo + primero) / 2;
+	}
+	/** Metodo encargado de hacer la llamada a la configuracion de la puerta. 
+	 * @param codigoPuerta es el array que contiene las llaves.
+	 * @param numElementos contiene el numero de elementos del array.
+	 * @param profundidad indica la profundidad minima de apertura de la puerta.
+	 * @param nodosApertura indica los nodos minimos que deben quedar en el arbol para abrir la puerta.*/
+	public void configurarPuerta (Llave codigoPuerta[], int numElementos, int profundidad,
+			int nodosApertura) {
+		
+		puertaConfigurada = true;
+		puertaAbierta = false;
+		
+		setProfundidad(profundidad);
+		setNodosMinimos(nodosApertura);
+		
+		llavesCerradura = new Arbol();
+		llavesProbadas = new Arbol();
+		
+		algoritmoConfiguracionPuerta(0, numElementos - 1, codigoPuerta);	
+	}
+	/** Metodo encargado de probar las llaves para abrir la puerta. 
+	 * @return devuelve verdadero si la llave probada es buena y falso en caso contrario.*/
+	public boolean probarLlave (Llave llavePrueba) {
+		
+		boolean llaveBuena = false;
+		
+		if(!llavesProbadas.pertenece(llavePrueba)) {
+			
+			if(llavesCerradura.pertenece(llavePrueba)) {
+				
+				llavesProbadas.insertar(llavePrueba);
+				llavesCerradura.borrar(llavePrueba);
+				intentarAbrirPuerta ();
+				llaveBuena = true;
+			}
+		}
+		
+		else {
+			
+			alarma();
+		}
+		
+		return llaveBuena;
+	}
+	/** Metodo encargado de abrir la puerta. */
+	private void intentarAbrirPuerta () {
+		
+		if (llavesCerradura.profundidadArbol() <= profundidadApertura
+				&& llavesCerradura.numeroNodosInterno() <= nodosMinimosApertura) {
+			
+			puertaAbierta = true;
+		}
+	}
+	/** Metodo que nos devuelve si la puerta esta configurada o no.*/
+	public boolean esPuertaConfigurada () {
+		
+		return puertaConfigurada;
+	}
+	/** Metodo que nos devuelve si la puerta esta abierta o no. */
+	public boolean esPuertaAbierta () {
+		
+		return puertaAbierta;
+	}
+	/** Metodo que establece la profundidad de la puerta.*/
+	public void setProfundidad (int nuevaProfundidad) {
+		
+		profundidadApertura = nuevaProfundidad;
+	}
+	/** Metodo que obtiene la profundidad de la puerta.*/
+	public int getProfundidad () {
+		
+		return profundidadApertura;
+	}
+	/** Metodo que establece los nodos de puerta.*/
+	public void setNodosMinimos (int nuevaCantidadNodos) {
+		
+		nodosMinimosApertura = nuevaCantidadNodos;
+	}
+	/** Metodo que obtiene los nodos minimos de la puerta.*/
+	public int getNodosMinimos () {
+		
+		return nodosMinimosApertura;
+	}
+	/** Metodo encargado de dar un aviso en caso de que se pruebe dos veces la misma llave.*/
+	private void alarma () {
+		
+		System.out.println("Alarma, se ha intentado probar la misma llave des veces.");
+	}
+	public void profundidadYnNodosMinimos() {
+		
+		System.out.println("El numero de nodos minimo es:" + llavesCerradura.numeroNodosInterno());
+		System.out.println("La profundidad del arbol es: " + llavesCerradura.profundidadArbol());
+	}
+}

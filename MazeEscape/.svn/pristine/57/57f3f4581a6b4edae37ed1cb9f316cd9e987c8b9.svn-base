@@ -1,0 +1,714 @@
+/**
+* Implementación de la clase Laberinto
+* @version 2.0
+* @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+* Asignatura Desarrollo de Programas<br/>
+* Curso 14/15
+* Nombre grupo: IngenierosEnProcesión
+* Numero de entrega: EC2
+*/
+
+package Laberinto;
+
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Set;
+
+import Otros.Direcciones;
+
+
+
+import Otros.GenAleatorios;
+import Otros.Llave;
+import Otros.MovimientoRobots;
+import Robot.Robots;
+import EstrucurasDeDatos.Grafo;
+import InteractuarFicheros.Cargador;
+import InteractuarFicheros.FicheroCarga;
+import InteractuarFicheros.VolcarFichero;
+//import InteractuarFicheros.lab;
+import Laberinto.SalaConPuerta;
+
+public class Laberinto {
+	/** Vector que nos permite crear el array bidimensional con las salas.*/
+	private Sala [][] SalasLab;	
+	/** Puntero a la sala de la puerta para acceder a ella m�s f�cilmente*/
+	private SalaConPuerta salaPuerta;	
+	/** Sala donde entrar�n los robots ganadores */
+	private Sala salaGanadores;
+	/** Entero que nos permite establcer el número máximo de columnas del array.*/	
+	private int maxColumnas;
+	/** Entero que nos permite establcer el número máximo de filas del array.*/
+	private int maxFilas;
+	/** Entero que nos permite establcer el número máximo de turnos del laberinto.*/
+	private int maxTurnos;
+	/** Entero que nos permite almacenar el turno actual del laberinto.*/
+	private int turnoLaberinto;
+	/** Entero para establecer la profundidad mínima a la que se va a abrir la puerta.*/
+	private int profundidadPuerta;
+	/** Entero para establecer los nodos mínimos a los que se va a abrir al puerta.*/
+	private int nodosPuerta;
+	
+	private Grafo grafo;
+	
+	private static Laberinto instancia = null;
+	
+	
+	/* Constructores ---------------------------------*/
+	
+	public Laberinto() {
+		
+	}
+	
+	public Laberinto(int maxF, int maxC, int idSalaPuerta,  int profPuer) {
+		
+		/** Inicializacion parametrizada de los atributos. */
+		maxFilas = maxF;
+		maxColumnas = maxC;
+		/* maxFilas * maxColumnas >= 15 */
+		maxTurnos = 50;
+		Llave llaveroConfiguracion[] = llaveroGenerico();
+		profundidadPuerta = profPuer;
+		nodosPuerta = 15;
+		
+		grafo = new Grafo();
+						
+		turnoLaberinto = 0;
+		
+		/** Creamos las salas del laberinto. */
+		
+		SalasLab  = new Sala[maxFilas][maxColumnas];
+		
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j< maxColumnas; j++) {
+				
+				SalasLab[i][j] = new Sala();
+				SalasLab[i][j].setIdSala(matrizAVector(i, j));
+				grafo.nuevoNodo(matrizAVector(i,j));
+				
+			}
+		}
+		
+		int auxX = vectorAMatrizX(idSalaPuerta);
+		int auxY = vectorAMatrizY(idSalaPuerta);
+		
+		SalasLab[auxX][auxY] =
+				new SalaConPuerta(llaveroConfiguracion, 15, profundidadPuerta, nodosPuerta);
+		salaPuerta = (SalaConPuerta) SalasLab[auxX][auxY];	
+		
+		salaPuerta.setIdSala(idSalaPuerta);
+		
+		salaGanadores = new Sala();
+
+		distribuirLlaves();
+		
+		imprimirlaberinto ();
+		
+	}
+
+	/* Principal ---------------------------------*/
+	
+	/** Método mediante el que controlamos los turnos del laberinto.*/
+	private void gestorDeTurnos() {
+		
+		while(turnoLaberinto < maxTurnos && !salaPuerta.esPuertaAbierta()) {
+			
+			moverRobotLaberinto();
+			turnoLaberinto++;
+		}
+		
+		if (turnoLaberinto == maxTurnos) {
+			
+			System.out.println ("La simulacion ha acabado agotandose los turnos");
+		}
+		
+		else {
+			
+			System.out.println ("La simulacion ha acabado abriendose la puerta");
+		}
+	}
+	
+	/** Método mediante el que movemos los robots por el laberinto.*/
+	private void moverRobotLaberinto() {
+		
+		Robots robotAux;
+		boolean hayRobot;
+		
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j< maxColumnas; j++) {
+				
+				hayRobot = false;	
+				
+				if (SalasLab[i][j].hayRobot()){
+					
+					hayRobot = true;
+					robotAux = SalasLab[i][j].mostrarRobot();				
+				
+					while(hayRobot && robotAux.getTurnoRobot() <= turnoLaberinto) {
+						
+						robotAux.robotHaceSusCosas(this);
+						robotAux.incrementarTurno();
+					
+						hayRobot = false;
+					
+						if (SalasLab[i][j].hayRobot()) {
+						
+							hayRobot = true;
+							robotAux = SalasLab[i][j].mostrarRobot();
+						}											
+					}
+				}				
+			}	
+		}
+	}
+	
+	
+	
+	/* Get Set  ---------------------------------*/
+	
+	public int getTurno() {
+		
+		return turnoLaberinto;
+	}
+	
+	/** Métood que nos devuelve el las columnas del array de salas en un entero.*/	
+	public int getMaxColumnas() {
+		
+		return maxColumnas;
+	}
+	/** Métood que nos devuelve el las filas del array de salas en un entero.*/
+	public int getMaxFilas() {
+		
+		return maxFilas;
+	}
+	/** Método que nos devuelve la posicion de una sala.*/
+	public Sala devovlerSala(int x, int y ) {
+		
+		return SalasLab[x][y];
+	}
+	public SalaConPuerta devolverSalaConPuerta() {
+		
+		return salaPuerta;
+	}
+	/** Método que devuelve la sala de ganadores. */
+	public Sala devovlerSalaGanadores() {
+		
+		return salaGanadores;
+	}
+	/** Método que nos devuelve la profundidad del arbol de llaves de la puerta.*/
+	public int getProfundidadPuerta () {
+		
+		return profundidadPuerta;
+	}
+	/** Método que nos devuelve el número de nodos mínimos de apertura.*/
+	public int getNodosPuerta () {
+		
+		return nodosPuerta;
+	}
+	public void insertarRobot(int x, int y,Robots robAux)  {
+		
+		SalasLab[x][y].robotEntra(robAux);
+	}
+	public Grafo getGrafo() {
+		
+		return grafo;
+	}
+	
+	/* Singleton ---------------------------------*/
+	
+	public static Laberinto getInstancia () {
+		
+		if (instancia == null)
+			instancia = new Laberinto();
+		
+		return instancia;
+	}
+	
+	public static Laberinto getInstancia (int anchura, int altura, int idSalaPuerta, int profPuerta) {
+		
+		if (instancia == null) {
+			
+			instancia = new Laberinto (anchura, altura, idSalaPuerta, profPuerta);
+		}
+		return instancia;
+	}
+	
+	/* Utilidad ---------------------------------*/
+	
+	private void reutilizarIDDerribo () {
+		
+		Sala salaAux;
+		
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j < maxColumnas; j++) {
+				
+				salaAux = devovlerSala(i,j);
+				salaAux.setIdDerribo(0);
+			}
+		}
+	}
+	
+	/** Método empleado para la distribucion de llaves en las salas indicadas. */
+	private void distribuirLlaves() {
+		
+		int[] idSalasConLlave = {3, 4, 6, 8, 9, 10, 11, 12, 13};
+		int llavesPorSala = 45/idSalasConLlave.length;
+		int pIn = 0;
+		int pFin = llavesPorSala;
+		int llaveActual = 0;
+		
+		boolean incrementoImpar = false;
+		
+		for (int k = 0; k < idSalasConLlave.length; k++) {
+			
+			int aux = idSalasConLlave[k];
+
+				for (int i = pIn; i < pFin; i++) {
+					
+					Llave llaux = new Llave(llaveActual);
+					SalasLab[aux/maxColumnas][aux%maxColumnas].repartirLlavesOrdenSala(llaux);
+					
+					if(llaveActual % 2 == 0 || incrementoImpar) {
+						
+						llaveActual++;
+						incrementoImpar = false;
+					}
+					
+					else {
+						
+						incrementoImpar = true;
+					}
+				}	
+				
+				pIn = pFin;
+				pFin += llavesPorSala;
+
+		}
+	}	
+	
+	/** Método que genera un vector con las llaves para configurar la puerta de salida. */
+	public Llave[] llaveroGenerico () {
+		
+		Llave[] llaveroConfiguracion = new Llave[15];
+		
+		for (int i = 0; i < 15; i++) {
+			
+			llaveroConfiguracion[i]= new Llave(2 * i + 1);
+		}
+		
+		return llaveroConfiguracion;
+	}
+	
+	/** Método que nos transforma una matriz en un vector. */
+	public int matrizAVector(int filas, int columnas) {
+		
+		return (filas * maxColumnas) + columnas;
+	}
+	
+	private int vectorAMatrizX(int id) {
+				
+		return (id % maxColumnas); 
+	}
+	
+	private int vectorAMatrizY(int id) {
+		
+		return (id / maxColumnas);
+	}
+	
+//	
+//	public int caminoMin(int origen, int destino) {
+//
+////        while (origen != destino) {
+////
+////          // System.out.print("\nSiguiente nodo a visitar: ");
+////           origen = grafo.siguiente(origen, destino);
+////          
+////           //System.out.print(origen);
+////        }
+////        return origen;
+//   }
+	
+	/* Imprimir ---------------------------------*/
+	
+	private void imprimirlaberinto (){
+		
+//		Sala salaAux1;
+//		Sala salaAux2;
+//		for (int j = 0; j < maxColumnas; j++) {
+//		
+//			System.out.print(" _");
+//		}		
+//
+//		System.out.println();
+//		
+//		for (int i = 0; i < maxFilas; i++) {
+//			
+//			for (int j = 0; j< maxColumnas; j++) {
+//				
+//				grafo.floyd();
+//				grafo.warshall();
+//				salaAux1 = devovlerSala(i, j);	
+//				salaAux2 = devovlerSala(i, j+1);
+//				
+//				if((caminoMin(salaAux1.getIdSala(),salaAux2.getIdSala())) == 1){ 
+//					System.out.print("|_");
+//				}
+//				
+//			}
+//			
+//			System.out.print("|");
+//			System.out.println();
+//		}
+//		
+//		System.out.println();
+	}
+
+
+//	public void mostrarLlavesCerraduraRestantes() {
+//		
+//		salaPuerta.mostrarLlavesPuerta();
+//	}
+//	
+//	public void mostrarLlavesProbadasRestantes() {
+//		
+//		salaPuerta.mostrarLlavesPuerta();
+//	}
+
+	
+	/* Kruskal ---------------------------------*/
+	
+
+	public void kruskal () {
+		
+		ArrayList<Pared> coleccionParedes = new ArrayList<Pared>();
+		int contadorAux = 0;
+		Pared paredAux;
+		
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j< maxColumnas; j++) {
+				
+				if (i != 0) {
+					
+					paredAux = new Pared(matrizAVector(i,j),matrizAVector(i-1,j));
+					coleccionParedes.add(paredAux);
+					contadorAux++;
+				}
+				
+				if (j != maxColumnas-1) {
+					
+					paredAux = new Pared(matrizAVector(i,j),matrizAVector(i,j+1));
+					coleccionParedes.add(paredAux);
+					contadorAux++;
+				}
+				
+				if (i != maxFilas-1) {
+					
+					paredAux = new Pared(matrizAVector(i,j),matrizAVector(i+1,j));
+					coleccionParedes.add(paredAux);
+					contadorAux++;
+				}
+				
+				if (j != 0) {
+					
+					paredAux = new Pared(matrizAVector(i,j),matrizAVector(i,j-1));
+					coleccionParedes.add(paredAux);
+					contadorAux++;
+				}								
+			}
+		}
+		
+//		for (int i = 0; i < coleccionParedes.size(); i++) {
+//			
+//			coleccionParedes.get(i).mostrar();
+//		}		
+		
+//		System.out.println("Las paredes son:" + contadorAux);
+		
+		generarRandomLab (coleccionParedes, contadorAux);
+		
+		grafo.floyd();
+		grafo.warshall();
+						
+		crearAtajos();
+		
+		grafo.floyd();
+		grafo.warshall();
+	}
+		
+	private void generarRandomLab (ArrayList<Pared> coleccionParedes, int candidatos) {
+		
+		int numRand;
+		Pared pared;
+		Sala salaAux1;
+		Sala salaAux2;
+		int auxColum, auxFil;
+		
+		while (!coleccionParedes.isEmpty()) {
+			
+			numRand = GenAleatorios.generarNumero(candidatos);
+			candidatos--;
+						
+			pared = coleccionParedes.get(numRand);
+			coleccionParedes.remove(numRand);
+			
+			auxColum = vectorAMatrizX(pared.getSala1());
+			auxFil = vectorAMatrizY(pared.getSala1());
+			salaAux1 = devovlerSala (auxFil, auxColum);
+			
+			auxColum = vectorAMatrizX(pared.getSala2());
+			auxFil = vectorAMatrizY(pared.getSala2());
+			salaAux2 = devovlerSala (auxFil, auxColum);
+			
+			if (salaAux1.getIdDerribo() != salaAux2.getIdDerribo()) {
+				
+				grafo.nuevoArco(pared.getSala1(), pared.getSala2(), 1);
+				grafo.nuevoArco(pared.getSala2(), pared.getSala1(), 1);
+
+				propagarIDDerribo (salaAux1.getIdDerribo(), salaAux2.getIdDerribo());
+
+			}
+		}				
+	}
+	
+	private void propagarIDDerribo (int nuevoID, int viejoID) {
+		
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j < maxColumnas; j++) {
+				
+				if (devovlerSala(i,j).getIdDerribo() == viejoID) {
+					
+					devovlerSala(i,j).setIdDerribo(nuevoID);
+				}
+			}
+		}
+	}
+	
+	private void crearAtajos () {
+		// NSOE
+		int rango = maxFilas * maxColumnas - 1;
+		int paredesADerribar = (maxFilas * maxColumnas * 5) / 100;
+//		System.out.println("Las paredes son: " + paredesADerribar);
+		
+		int numRand;
+		
+		while (paredesADerribar != 0) {
+			
+			numRand = GenAleatorios.generarNumero(rango);
+
+			if (hayAtajo (numRand, numRand - maxColumnas)) {
+				
+				grafo.nuevoArco(numRand, numRand - maxColumnas, 1);
+				paredesADerribar--;
+			}
+			
+			else if(hayAtajo (numRand, numRand + maxColumnas)) {
+
+				grafo.nuevoArco(numRand, numRand + maxColumnas, 1);
+				paredesADerribar--;
+			}
+			
+			else if(hayAtajo (numRand, numRand - 1)) {
+
+				grafo.nuevoArco(numRand, numRand - 1, 1);
+				paredesADerribar--;
+			}
+			
+			else if(hayAtajo (numRand, numRand + 1)) {
+
+				grafo.nuevoArco(numRand, numRand + 1, 1);
+				paredesADerribar--;
+			}
+		}
+	}
+	
+	private boolean hayAtajo (int ID1, int ID2) {
+		
+		if (grafo.adyacente(ID1, ID2)) {
+			
+			return false;
+		}
+		
+		int contador = 0;
+		
+		while (contador < 3) {
+			
+			ID1 = grafo.siguiente(ID1, ID2);
+			if (ID1 == ID2) {
+				
+				return false;
+			}
+			
+			contador++;
+		}
+
+		return true;
+	}
+	
+	
+	/* Profundidad ---------------------------------*/
+	
+	public void repartirLlaves () {
+		
+		reutilizarIDDerribo();
+		
+		boolean nodosVisitados[] = new boolean[maxFilas * maxColumnas];
+		
+		for (int i = 0; i < maxFilas * maxColumnas; i++) {
+			
+			nodosVisitados[i] = false;
+		}
+		
+		ArrayList<Integer> historicoPaso = new ArrayList<Integer> ();
+		int idFin = salaPuerta.getIdSala();
+		
+		nodosVisitados[0] = true;
+		historicoPaso.add(0); 
+				
+		backtracking (nodosVisitados, historicoPaso, idFin, 1, 0);
+	}
+	
+	private void backtracking (boolean[] nodosVisitados, ArrayList<Integer> historicoPaso, int idFin, int etapa, int cursor) {
+			
+		if (cursor == idFin) {
+			
+			for (int i = 0; i < etapa; i++) {
+				
+				System.out.println(historicoPaso.get(i));
+			}
+		}
+		
+		else {
+			
+			// Ir al este
+			if (grafo.adyacente(cursor, cursor + 1) && nodosVisitados[cursor + 1] == false) {
+				
+				nodosVisitados[cursor + 1] = true;
+				historicoPaso.add(cursor + 1);
+				
+				backtracking (nodosVisitados, historicoPaso, idFin, etapa + 1, cursor + 1);
+				
+				nodosVisitados[cursor + 1] = false;
+				historicoPaso.remove(etapa);
+			}
+			
+			// Ir al sur
+			
+			if (grafo.adyacente(cursor, cursor + maxColumnas) && nodosVisitados[cursor + maxColumnas] == false) {
+				
+				nodosVisitados[cursor + maxColumnas] = true;
+				historicoPaso.add(cursor + maxColumnas);
+				
+				backtracking (nodosVisitados, historicoPaso, idFin, etapa + 1, cursor + maxColumnas);
+				
+				nodosVisitados[cursor + maxColumnas] = false;
+				historicoPaso.remove(etapa);
+			}
+			
+			// Ir al oeste
+			
+			if (grafo.adyacente(cursor, cursor - 1) && nodosVisitados[cursor - 1] == false) {
+				
+				nodosVisitados[cursor - 1] = true;
+				historicoPaso.add(cursor - 1);
+				
+				backtracking (nodosVisitados, historicoPaso, idFin, etapa + 1, cursor - 1);
+				
+				nodosVisitados[cursor - 1] = false;
+				historicoPaso.remove(etapa);
+			}
+			
+			// Ir al norte
+			
+			if (grafo.adyacente(cursor, cursor - maxColumnas) && nodosVisitados[cursor - maxColumnas] == false) {
+				
+				nodosVisitados[cursor - maxColumnas] = true;
+				historicoPaso.add(cursor - maxColumnas);
+				
+				backtracking (nodosVisitados, historicoPaso, idFin, etapa + 1, cursor - maxColumnas);
+				
+				nodosVisitados[cursor - maxColumnas] = false;
+				historicoPaso.remove(etapa);
+			}
+		}
+	}
+	
+	
+	/* Main ---------------------------------*/
+	
+	/** Clase main desde la que llevamos a cabo la simulación del laberinto.
+	 * @throws IOException */
+	public static void main(String[] args) throws IOException {
+		
+		Laberinto lab = null; 
+		
+		/**  
+		instancia asociada al fichero de entrada inicio.txt
+		*/
+		Cargador cargador = new Cargador(lab);
+		
+		try {
+			/**  
+			M�todo que procesa l�nea a l�nea el fichero de entrada inicio.txt
+			*/
+		     FicheroCarga.procesarFichero("inicio.txt", cargador);
+		}
+		catch (FileNotFoundException valor)  {
+			System.err.println ("Excepci�n capturada al procesar fichero: "+valor.getMessage());
+		}
+		catch (IOException valor)  {
+			System.err.println ("Excepci�n capturada al procesar fichero: "+valor.getMessage());
+		}
+		
+	 	FileWriter fichero = new FileWriter("registro.log");  
+       	PrintWriter pw = new PrintWriter(fichero);
+       	
+       	VolcarFichero volcar = new VolcarFichero();
+		
+       	volcar.volcadoVarios(pw);
+       	volcar.volcadoSalas(pw);
+		volcar.volcadoRobots(pw);
+		volcar.volcarLaberinto(pw);
+		
+		lab = Laberinto.getInstancia();
+		lab.gestorDeTurnos();
+				
+		//Volcado a fichero ------------------------------------------
+		
+		
+		lab.kruskal ();
+		
+		lab.repartirLlaves ();
+
+		
+		LinkedList<Llave> llavesLab = 	lab.devolverSalaConPuerta().mostrarLlavesPuerta();
+//		for (int i = 0; i < llavesLab.size(); i++) {
+//			
+//			System.out.println(llavesLab.get(i).getIdLlave());
+//		}	
+			
+		//(puerta:<estado>:<altura de apertura>:<llaves cerradura>:<llaves probadas>)
+
+//       	FileWriter fichero = new FileWriter("registro.log");  
+//       	PrintWriter pw = new PrintWriter(fichero);
+       	
+//       	VolcarFichero volcar = new VolcarFichero();
+		
+       	volcar.volcadoVarios(pw);
+       	volcar.volcadoSalas(pw);
+		volcar.volcadoRobots(pw);
+		volcar.volcarLaberinto(pw);
+		
+		pw.close();	
+	}
+}
+
+

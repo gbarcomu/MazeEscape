@@ -1,0 +1,321 @@
+/**
+* Implementación de la clase Laberinto
+* @version 2.0
+* @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+* Asignatura Desarrollo de Programas<br/>
+* Curso 14/15
+* Nombre grupo: IngenierosEnProcesión
+* Numero de entrega: EC2
+*/
+
+package Laberinto;
+
+import Otros.Direcciones;
+import Otros.Llave;
+import Robot.Bender;
+import Robot.RobotDropeador;
+import Robot.Robots;
+import Robot.Sonny;
+import Robot.Spirit;
+import Laberinto.SalaConPuerta;
+
+public class Laberinto {
+	/** Vector que nos permite crear el array bidimensional con las salas.*/
+	private Sala [][] SalasLab;	
+	/** Puntero a la sala de la puerta para acceder a ella m�s f�cilmente*/
+	private SalaConPuerta salaPuerta;	
+	/** Sala donde entrar�n los robots ganadores */
+	private Sala salaGanadores;
+	/** Entero que nos permite establcer el número máximo de columnas del array.*/	
+	private int maxColumnas;
+	/** Entero que nos permite establcer el número máximo de filas del array.*/
+	private int maxFilas;
+	/** Entero que nos permite establcer el número máximo de turnos del laberinto.*/
+	private int maxTurnos;
+	/** Entero que nos permite almacenar el turno actual del laberinto.*/
+	private int turnoLaberinto;
+	/** Entero para establecer la profundidad mínima a la que se va a abrir la puerta.*/
+	private int profundidadPuerta;
+	/** Entero para establecer los nodos mínimos a los que se va a abrir al puerta.*/
+	private int nodosPuerta;
+	/** Método que carga la configuración por defcto del laberinto. */
+	public void cargarConfiguracionLaberinto () {
+		/** Boleano que nos devuelve verdadero si la configuración es por defecto. Falso en caso contrario.*/
+		boolean porDefecto = true;
+		/** Inicializacion por defecto de los atributos. */
+		maxFilas = 3;
+		maxColumnas = 5;
+		/* maxFilas * maxColumnas >= 15 */
+		maxTurnos = 50;
+		Llave llaveroConfiguracion[] = {};
+		profundidadPuerta = 4;
+		nodosPuerta = 9;
+
+				/**************************/
+		
+		if (porDefecto) {
+			
+			llaveroConfiguracion = llaveroGenerico();			
+		}
+		
+		turnoLaberinto = 0;
+		
+		/** Creamos las salas del laberinto. */
+		
+		SalasLab  = new Sala[maxFilas][maxColumnas];
+		
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j< maxColumnas; j++) {
+				
+				SalasLab[i][j] = new Sala();
+				SalasLab[i][j].setIdSala(matrizAVector(i, j));
+				
+			}
+		}
+		
+		SalasLab[maxFilas -1][maxColumnas -1] = new SalaConPuerta(llaveroConfiguracion,15,profundidadPuerta
+				,nodosPuerta);
+		salaPuerta = (SalaConPuerta) SalasLab[maxFilas -1][maxColumnas -1];	
+		salaPuerta.setIdSala(matrizAVector(maxFilas -1, maxColumnas -1));
+		
+		salaGanadores = new Sala();
+		}
+	/** Método que carga la configuración inicial del laberinto y la posición inicial de los robots*/
+	public void cargarConfiguracionRobots () {
+		
+		boolean porDefecto = true;
+		
+		Llave llaveroAsimo[] = {};
+		
+		if (porDefecto) {
+			
+			
+			llaveroAsimo = llaveroGenerico ();
+		}
+			
+		Direcciones direccionesBender[] = {Direcciones.N,Direcciones.S,Direcciones.S,Direcciones.E,
+				Direcciones.E,Direcciones.O};			
+		Bender bender = new Bender("Bender", direccionesBender);
+		SalasLab[0][0].robotEntra(bender);
+			
+		Direcciones direccionesSonny[] = {Direcciones.N,Direcciones.S,Direcciones.S,Direcciones.E,
+				Direcciones.E,Direcciones.S};			
+		Sonny sonny = new Sonny("Sonny", direccionesSonny);
+		SalasLab[0][0].robotEntra(sonny);
+			
+		Direcciones direccionesSpirit[] = {Direcciones.N,Direcciones.S,Direcciones.E,Direcciones.E,
+				Direcciones.E,Direcciones.O};			
+		Spirit spirit = new Spirit("Spirit", direccionesSpirit, maxFilas-1);
+		SalasLab[maxFilas - 1][0].robotEntra(spirit);
+			
+		Direcciones direccionesAsimo[] = {Direcciones.N,Direcciones.S,Direcciones.N,Direcciones.O,
+				Direcciones.E,Direcciones.O};								
+
+		RobotDropeador asimo = new RobotDropeador("Asimo",llaveroAsimo, 
+			direccionesAsimo, maxFilas-1, maxColumnas-1);
+		SalasLab[maxFilas - 1][maxColumnas - 1].robotEntra(asimo);
+
+	}
+	/** Método que genera un vector con las llaves para configurar la puerta de salida. */
+	public Llave[] llaveroGenerico () {
+		
+		Llave[] llaveroConfiguracion = new Llave[15];
+		
+		for (int i = 0; i < 15; i++) {
+			
+			llaveroConfiguracion[i]= new Llave(2 * i + 1);
+		}
+		
+		return llaveroConfiguracion;
+	}
+	/** Constructor por defecto de la clase laberinto. */
+	public Laberinto () {
+		
+		cargarConfiguracionLaberinto();
+		cargarConfiguracionRobots();
+		distribuirLlaves();
+	}
+	/** Método que nos transforma una matriz en un vector. */
+	private int matrizAVector(int filas, int columnas) {
+		
+		return (filas * maxColumnas) + columnas;
+	}
+	/** Método empleado para la distribucion de llaves en las salas indicadas. */
+	private void distribuirLlaves() {
+		
+		int[] idSalasConLlave = {3, 4, 6, 8, 9, 10, 11, 12, 13};
+		int llavesPorSala = 45/idSalasConLlave.length;
+		int pIn = 0;
+		int pFin = llavesPorSala;
+		int llaveActual = 0;
+		
+		boolean incrementoImpar = false;
+		
+		for (int k = 0; k < idSalasConLlave.length; k++) {
+			
+			int aux = idSalasConLlave[k];
+
+				for (int i = pIn; i < pFin; i++) {
+					
+					Llave llaux = new Llave(llaveActual);
+					SalasLab[aux/maxColumnas][aux%maxColumnas].repartirLlavesOrdenSala(llaux);
+					
+					if(llaveActual % 2 == 0 || incrementoImpar) {
+						
+						llaveActual++;
+						incrementoImpar = false;
+					}
+					
+					else {
+						
+						incrementoImpar = true;
+					}
+				}	
+				
+				pIn = pFin;
+				pFin += llavesPorSala;
+
+		}
+	}	
+	/** Método mediante el que mostramos las llaves restantes en cada sala.*/
+	public void mostrarLlavesRestantes() {
+		
+		System.out.println("Llave: ");
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j< maxColumnas; j++) {
+							
+				System.out.println("Sala: " + SalasLab[i][j].getIdSala());
+				
+				while(!SalasLab[i][j].llaveroVacio()) {
+					
+					System.out.println("Llave: "+ SalasLab[i][j].recogerLlaveSala().getIdLlave());
+				}
+			}
+		}
+	}	
+	/** Método mediante el que movemos los robots por el laberinto.*/
+	private void moverRobotLaberinto() {
+		
+		Robots robotAux;
+		boolean hayRobot;
+		
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j< maxColumnas; j++) {
+				
+				hayRobot = false;	
+				
+				if (SalasLab[i][j].hayRobot()){
+					
+					hayRobot = true;
+					robotAux = SalasLab[i][j].mostrarRobot();				
+				
+					while(hayRobot && robotAux.getTurnoRobot() <= turnoLaberinto) {
+						
+						robotAux.robotHaceSusCosas(this);
+						robotAux.incrementarTurno();
+					
+						hayRobot = false;
+					
+						if (SalasLab[i][j].hayRobot()) {
+						
+							hayRobot = true;
+							robotAux = SalasLab[i][j].mostrarRobot();
+						}											
+					}
+				}				
+			}	
+		}
+	}
+	/** Método que nos dice donde estan los robots.*/
+	public void dondeEsta() {
+		
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j< maxColumnas; j++) {
+
+				if(SalasLab[i][j].hayRobot()) {
+					
+					System.out.println("En la sala: " + SalasLab[i][j].getIdSala());
+				}				
+				
+				while (SalasLab[i][j].hayRobot()) {
+					
+					System.out.println("Esta el robot: " + SalasLab[i][j].robotSale().getNombre());
+				}
+			}
+		}
+		
+		if(salaGanadores.hayRobot()) {
+			
+			System.out.println("En la sala de ganadores: ");
+		}				
+		
+		while (salaGanadores.hayRobot()) {
+			
+			System.out.println("Esta el robot: " + salaGanadores.robotSale().getNombre());
+		}
+	}
+	/** Método mediante el que controlamos los turnos del laberinto.*/
+	public void gestorDeTurnos() {
+		
+		while(turnoLaberinto < maxTurnos && !salaPuerta.esPuertaAbierta()) {
+			
+			moverRobotLaberinto();
+			turnoLaberinto++;
+		}
+		
+		if (turnoLaberinto == maxTurnos) {
+			
+			System.out.println ("La simulacion ha acabado agotandose los turnos");
+		}
+		
+		else {
+			
+			System.out.println ("La simulacion ha acabado abriendose la puerta");
+		}
+	}
+	/** Métood que nos devuelve el las columnas del array de salas en un entero.*/
+	public int getMaxColumnas() {
+		
+		return maxColumnas;
+	}
+	/** Métood que nos devuelve el las filas del array de salas en un entero.*/
+	public int getMaxFilas() {
+		
+		return maxFilas;
+	}
+	/** Método que nos devuelve la posicion de una sala.*/
+	public Sala devovlerSala(int x, int y ) {
+		
+		return SalasLab[x][y];
+	}
+	/** Método que devuelve la sala de ganadores. */
+	public Sala devovlerSalaGanadores() {
+		
+		return salaGanadores;
+	}
+	/** Método que nos devuelve la profundidad del arbol de llaves de la puerta.*/
+	public int getProfundidadPuerta () {
+		
+		return profundidadPuerta;
+	}
+	/** Método que nos devuelve el número de nodos mínimos de apertura.*/
+	public int getNodosPuerta () {
+		
+		return nodosPuerta;
+	}
+	/** Clase main desde la que llevamos a cabo la simulación del laberinto.*/
+	public static void main(String[] args) {
+		
+		Laberinto lab = new Laberinto();
+		
+		lab.gestorDeTurnos();
+		lab.dondeEsta();
+		lab.mostrarLlavesRestantes();
+		
+	}
+}
+

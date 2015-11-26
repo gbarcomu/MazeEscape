@@ -1,0 +1,83 @@
+package EstrucurasDeDatos;
+ /**
+ * Implementación de la clase Cola
+ * @version 2.0
+ * @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+ * Asignatura Desarrollo de Programas<br/>
+ * Curso 14/15
+ * Nombre grupo: IngenierosEnProcesión
+ * Numero de entrega: EC2
+ */
+public class Cola <T> {
+	/** Puntero a la frente de la cola*/
+	private Nodo frente;
+	/** Puntero al final de la cola*/
+	private Nodo fin;
+	
+	 private class Nodo {
+		 /** Dato almacenado en cada nodo */
+		 private T dato;
+		 /** Enlace al siguiente elemento */
+		 private Nodo siguiente;
+		 
+		 Nodo(T dato) {
+			 
+			 this.dato = dato;
+			 this.siguiente = null;
+			 
+		 }
+	 }//clase nodo
+	 /**
+	  * Metodo constructor por defecto de la clase colas
+	  */
+	 public Cola () {
+		 
+		  frente = null;
+		  fin = null;
+	 }
+	 /**
+	 * Metodo que devuelve el elemento al frente de la cola
+	 *
+	 * @return la frente de la cola
+	 */
+	 public T primero() {
+		 
+		 return (frente.dato);
+	 }
+	 /**
+	 * Metodo para comprobar si la cola esta vacia o no
+	 *
+	 * @return true si esta vacia o false en caso contrario
+	 */
+	 public boolean esVacia() {
+		 
+		 return (frente == null);
+	 }
+	 /**
+	 * Metodo que permite insertar un dato
+	 *
+	 * @param dato valor que se va a insertar
+	 */
+	 public void encolar(T dato) {
+		 
+		 Nodo nuevoNodo = new Nodo(dato);
+		 
+		 if(frente == null) {
+			 frente = nuevoNodo;
+		 }
+		 
+		 else{
+			 
+			 fin.siguiente = nuevoNodo;
+		 }
+		 
+		 fin = nuevoNodo;
+	 }
+	 /**
+	* Elimina un dato de la cola. Se elimina el dato que esta en la frente
+	*/
+	 public void desencolar() {
+
+		frente = frente.siguiente;
+	 }
+}

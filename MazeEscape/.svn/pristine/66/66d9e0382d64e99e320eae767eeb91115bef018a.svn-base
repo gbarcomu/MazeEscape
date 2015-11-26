@@ -1,0 +1,68 @@
+package Robot;
+import Laberinto.Laberinto;
+import Laberinto.Sala;
+import Laberinto.SalaConPuerta;
+import Otros.Direcciones;
+import Otros.Llave;
+
+
+public class RobotRecogedor extends Robots {
+	
+	public RobotRecogedor (String nombre, int x, int y, Direcciones[] direcciones) {
+	
+		super(nombre, x, y, direcciones);
+	}
+	
+	public void interactuarPuerta (Laberinto laberinto) {		
+
+
+
+		Sala salaAux = laberinto.devovlerSala(posicionX, posicionY);
+		
+		if (salaAux instanceof SalaConPuerta) {
+			
+			System.out.println("El robot " + super.nombreRobot + " de tipo " + super.idRobot + 
+					" ha intentado abrir la puerta");
+			
+			if(!llaverVacio()) {
+				
+				Llave llaveAux = llavero.getDatoCima();
+				System.out.println ("INTRODUCIMOS LA LLAVE: " + llaveAux.getIdLlave());
+//				if (llaveAux.getIdLlave() % 2 != 0) {
+					
+					((SalaConPuerta) salaAux).ProbarLlave(llaveAux);					
+//				}
+				
+				llavero.desapilar();
+			}
+			
+			salaAux.robotEntra(salaAux.robotSale());
+			
+		}
+		
+		else {
+			
+			mover (laberinto);
+		}
+	}
+
+	public void interactuarLlave (Laberinto laberinto) {
+		
+		
+		Sala salaAux = laberinto.devovlerSala(posicionX, posicionY);
+		
+		if (!salaAux.llaveroVacio()) {
+			
+			Llave llaveAux;
+			
+			llaveAux = salaAux.recogerLlaveSala();
+			llavero.apilar(llaveAux);
+			
+			System.out.println("El robot " + super.nombreRobot + " de tipo " + super.idRobot + 
+					" ha cogido una llave" + llaveAux.getIdLlave());
+		}
+		
+		System.out.println("El robot " + super.nombreRobot + " de tipo " + super.idRobot + 
+				"NO ha cogido una llave");
+	}	
+}

@@ -1,0 +1,21 @@
+/**
+* Implementación de la clase Spirit
+* @version 2.0
+* @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+* Asignatura Desarrollo de Programas<br/>
+* Curso 14/15
+* Nombre grupo: IngenierosEnProcesión
+* Numero de entrega: EC2
+*/
+package Robot;
+
+import Otros.Direcciones;
+
+public class Spirit extends RobotRecogedor {
+	/** Constructor parametrizado de la clase Spirit que establece el nombre, el identificador y las direcciones a seguir.*/
+	public Spirit (String nombre, char marca, int x, int y, int turno, Direcciones[] direcciones) {
+		
+		super (nombre, x, y, turno, direcciones);
+		super.idRobot = marca;
+	}
+}

@@ -1,0 +1,12 @@
+package Robot;
+
+import Otros.Direcciones;
+
+public class Sonny extends RobotRecogedor {
+
+	public Sonny (String nombre, Direcciones[] direcciones) {
+		
+		super (nombre, 0, 0, direcciones);
+		super.idRobot = 'S';
+	}
+}

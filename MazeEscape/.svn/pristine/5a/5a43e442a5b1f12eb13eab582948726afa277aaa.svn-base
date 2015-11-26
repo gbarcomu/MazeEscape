@@ -1,0 +1,15 @@
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+
+public class RobotDropeadorTest {
+
+	@Test
+	public void testRobotHaceSusCosas() {
+		fail("Not yet implemented");
+	}
+
+}
+
+

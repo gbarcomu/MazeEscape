@@ -1,0 +1,35 @@
+package Robot;
+import EstrucurasDeDatos.Pila;
+import Otros.Llave;
+
+
+public abstract class Robots {
+
+	protected String nombreRobot;
+	protected char idRobot;
+	
+	protected Pila <Llave> llavero;
+	
+	public Robots () {
+		
+		nombreRobot = "";
+		idRobot = '0';
+		llavero = new Pila ();
+	}
+	
+	public Robots (String nombre) {
+		
+		nombreRobot = nombre;
+		llavero = new Pila ();
+	}	
+	
+	public abstract void interactuarPuerta ();
+	
+	public void mover () {
+		
+		System.out.println("El robot" + nombreRobot + "de tipo" + idRobot + "se ha movido");
+	}
+	
+	public abstract void interactuarLlave ();
+}
+

@@ -1,0 +1,84 @@
+ /**
+ * Impñementacion de la clase pila
+ * @version 1.0
+ * @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+ * Asignatura Desarrollo de Programas<br/>
+ * Curso 14/15
+ * Nombre grupo: IngenierosEnProcesion
+ * Numero de entrega: EC1
+ */
+public class Pila <T>{
+	/** Puntero a la cima de la pila*/
+	private Nodo cima;
+	
+	private class Nodo {
+		/** Dato almacenado en cada nodo */
+		private T dato;
+		/** Enlace al siguiente elemento */
+		private Nodo siguiente;
+		
+		Nodo (T dato) {
+			
+			this.dato = dato;
+			this.siguiente = null;
+		}
+	}// class nodo
+	/**
+	 * Metodo constructor por defecto de la clase Pila
+	 */
+	public Pila() {
+		
+		cima = null;
+	}
+	/**
+	 * Metodo constructor parametrizado de la clase pila
+	 *
+	 * @param dato es el nuevo elemento en la pila
+	 */
+	public Pila(T dato) {
+		
+		Nodo nuevoNodo = new Nodo(dato);
+		nuevoNodo.siguiente = cima;
+		cima = nuevoNodo;
+	}
+	/**
+	 * Metodo que devuelve el elemento en la cima de la pila
+	 *
+	 * @return la cima de la pila
+	 */
+	public T getDatoCima() {
+		
+		return (cima.dato);
+	}
+	/**
+	 * Metodo para comprobar si la pila esta vacia o no
+	 *
+	 * @return true si esta vacia o false en caso contrario
+	 */
+	public boolean esVacia() {
+		
+		return (cima == null);
+	}
+	/**
+	 * Metodo que permite insertar un dato
+	 *
+	 * @param dato valor que se va a insertar
+	 */
+	public void apilar(T dato) {
+		
+		Nodo nuevoNodo = new Nodo(dato);
+		
+		nuevoNodo.siguiente = cima;
+		cima =  nuevoNodo;
+	}
+	/**
+	* Elimina un dato de la pila. Se elimina el dato que esta en la cima
+	*/
+	public void desapilar() {
+		
+		if(!esVacia()) {
+			
+			cima = cima.siguiente;
+		}
+	}
+}

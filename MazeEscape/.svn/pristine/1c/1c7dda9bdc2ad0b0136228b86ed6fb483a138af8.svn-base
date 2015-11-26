@@ -1,0 +1,120 @@
+
+public class Laberinto {
+
+	private Pila<Llave> LlavesTotales;
+	private Sala [][] SalasLab;
+	
+	private int maxColumnas;
+	private int maxFilas;
+
+	Laberinto () {
+		System.out.println("Llave: ");
+		LlavesTotales = new Pila<Llave>();
+		maxFilas = 3;
+		maxColumnas = 5;
+		SalasLab  = new Sala[maxFilas][maxColumnas];
+		
+		int aux;
+		
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j< maxColumnas; j++) {
+				
+				if(i == maxFilas -1 && j == maxColumnas -1) {
+					
+					SalasLab[i][j] = new SalaConPuerta();
+				}
+				
+				else {
+					
+					SalasLab[i][j] = new Sala();
+				}
+				aux = matrizAVector(i, j);
+				SalasLab[i][j].setIdSala(aux);
+			}			
+		}
+		
+		distribuirLlaves();
+	}
+	
+//	Laberinto (Llave codigoPuerta[], Llave llavesTotales[], Robots robotsTotales[], int numeroDeSalas) {
+//
+//		SalasLaberinto = new Sala[numeroDeSalas];
+//		
+//		for (int i = 0; i < numeroDeSalas -1; i++) {
+//						
+//				SalasLaberinto[i] = new Sala();			
+//		}
+//		
+//		SalasLaberinto[numeroDeSalas -1] = new SalaConPuerta();		
+//	}
+	
+//	Laberinto(int numSalas,int ancho, int alto) {
+//		
+//		SalasLab = new Sala [ancho][alto];
+//		
+//		for (int i = 0; i < ancho -1; i++) {
+//			
+//			for (int j = 0; j< alto -1; j++) {
+//				
+//				SalasLab[i][j] = new Sala();
+//			}
+//			
+//		}
+//			
+//	}
+	private int matrizAVector(int filas, int columnas) {
+		
+		return (filas * maxColumnas) + columnas;
+	}
+	
+	private void distribuirLlaves() {
+		
+		Llave[] datos = {new Llave(0), new Llave(1), new Llave(1), new  Llave(2), new Llave(3), new Llave(3),
+				 new Llave(4), new Llave(5), new Llave(5), new Llave(6), new Llave(7), new Llave(7), new Llave(8),
+				 new Llave(9), new Llave(9) ,new Llave(10), new Llave(11), new Llave(11), new Llave(12), new Llave(13),
+				 new Llave(13), new Llave(14), new Llave(15), new Llave(15), new Llave(16), new Llave(17), new Llave(17), 
+				 new Llave(18), new Llave(19), new Llave(19), new Llave(20), new Llave(21), new Llave(21), new Llave(22),
+				 new Llave(23), new Llave(23), new Llave(24), new Llave(25), new Llave(25), new Llave(26), new Llave(27),
+				 new Llave(27), new Llave(28), new Llave(29), new Llave(29)};
+		
+		int[] idSalasConLlave = {3, 4, 6, 8, 9, 10, 11, 12, 13};
+		
+		int pIn = 0; int pfin = 4;
+		
+		for (int k = 0; k <= idSalasConLlave.length; k++) {
+			
+			int aux = idSalasConLlave[k];
+						
+			while (pIn <= pfin & pfin <= 45) {
+					
+				for (int i = pIn; i <= pfin; pIn ++){
+						
+					SalasLab[aux/maxColumnas][aux%maxColumnas].repartirLlavesOrdenSala(datos[i]);					
+				}					
+			}
+				
+			pIn=pfin;
+			pfin =pfin +5;			
+		}
+	}
+	
+	
+
+	public void mostrarLlavesRestantes() {
+		
+		System.out.println("Llave: ");
+		for (int i = 0; i < maxFilas; i++) {
+			
+			for (int j = 0; j< maxColumnas; j++) {
+							
+				System.out.println("Sala: " + SalasLab[i][j].getIdSala());
+				
+				while(!SalasLab[i][j].llaveroVacio()) {
+					
+					System.out.println("Llave: "+ SalasLab[i][j].recogerLlaveSala());
+				}
+			}
+		}
+	}	
+}

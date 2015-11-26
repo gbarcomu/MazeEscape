@@ -1,0 +1,73 @@
+/**
+* Implementación de la clase RobotDropeador
+* @version 2.0
+* @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+* Asignatura Desarrollo de Programas<br/>
+* Curso 14/15
+* Nombre grupo: IngenierosEnProcesión
+* Numero de entrega: EC2
+*/
+package Robot;
+
+import Laberinto.Laberinto;
+import Laberinto.Sala;
+import Laberinto.SalaConPuerta;
+import Otros.Direcciones;
+import Otros.Llave;
+
+
+public class RobotDropeador extends Robots{
+	/** Construcor parametrizado de la clase RobotDroeador.*/
+	public RobotDropeador (String nombre, char marca, Llave llaveroInicial[],int x, int y, int turno,
+			Direcciones[] direcciones) {
+		 
+		super(nombre, x, y, turno, direcciones);
+
+		for (int i = 0; i < llaveroInicial.length; i++) {
+			
+			guardarLlave(llaveroInicial[i]);
+		}
+			
+		super.idRobot = marca;
+	}
+	/** Método que nos permite volver a configurar la puerta. */
+	public void interactuarPuerta (Laberinto laberinto) {
+		
+		Sala salaAux = laberinto.devovlerSala(posicionX, posicionY);
+		
+		if (salaAux instanceof SalaConPuerta) {
+			
+			Llave llaveroConfiguracion[] = laberinto.llaveroGenerico();
+			
+			int auxProfu = laberinto.getProfundidadPuerta();
+			int auxNodos = laberinto.getNodosPuerta();
+			
+			((SalaConPuerta) salaAux).configurarPuerta(llaveroConfiguracion, 15, auxProfu, auxNodos);
+			
+			System.out.println ("Un robot asimo ha reconfigurado la puerta");
+			
+		}
+		
+		super.mover(laberinto);
+	}
+	/** Método que nos permite dejar llaves en las salas del laberinto. */
+	public void interactuarLlave (Laberinto laberinto) {
+		
+		Sala salaAux = laberinto.devovlerSala(posicionX, posicionY);
+		
+		if (salaAux.getIdSala() % 2 == 0){
+			
+			if (!llavero.isEmpty()) {
+				
+				Llave llaveAux;
+				llaveAux = llavero.firstElement();
+				salaAux.dejarLlaveSala(llaveAux);
+				llavero.pop();
+			}
+		}
+		
+//		System.out.println("El robot " + super.nombreRobot + " de tipo " + super.idRobot + 
+//				" ha dejado una llave");
+				
+	}
+}

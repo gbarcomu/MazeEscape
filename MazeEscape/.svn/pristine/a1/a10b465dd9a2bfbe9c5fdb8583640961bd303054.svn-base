@@ -1,0 +1,439 @@
+package Otros;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
+import EstrucurasDeDatos.Grafo;
+import Laberinto.Laberinto;
+
+public class MovimientoRobots {
+
+	private Queue<Direcciones> colaDir1Ida;
+	private Stack<Direcciones> pilaDir1Vuelta;
+	private Queue<Direcciones> colaDir2;
+	private Queue<Direcciones> colaDir3;
+	private Queue<Direcciones> colaDir4;
+	private Laberinto lab;
+	private Grafo grafo;
+	
+	private ArrayList<Integer> mejorCamino;
+	
+	public MovimientoRobots() {
+		
+		colaDir1Ida = new LinkedList<Direcciones>();
+		pilaDir1Vuelta = new Stack<Direcciones>();
+		colaDir2 = new LinkedList<Direcciones>();
+		colaDir3 = new LinkedList<Direcciones>();
+		colaDir4 = new LinkedList<Direcciones>();
+		lab = Laberinto.getInstancia();
+		grafo = lab.getGrafo();
+		mejorCamino = new ArrayList<Integer>();
+		
+		
+	}
+	
+	public void IDADirecciones () {
+		
+		for (int i = 1; i < mejorCamino.size(); i++) {
+			
+			if((mejorCamino.get(i) - mejorCamino.get(i - 1)) > 0) {
+				
+				if((mejorCamino.get(i) - mejorCamino.get(i - 1)) == 1) {
+					
+					colaDir4.add(Direcciones.E);
+				}				
+				else {
+					
+					colaDir4.add(Direcciones.S);
+				}
+			}			
+			else {
+				
+				if((mejorCamino.get(i) - mejorCamino.get(i - 1)) == -1) {
+					
+					colaDir4.add(Direcciones.O);
+				}
+				
+				else {
+					
+					colaDir4.add(Direcciones.N);
+				}
+			}
+		}
+	}
+	
+	public void calcularRutaMinima(int pos) {
+		
+		int idPuerta = lab.devolverSalaConPuerta().getIdSala();
+		
+		while (idPuerta != pos) {
+			
+			int aux;
+			aux = grafo.siguiente(pos, idPuerta); 
+			
+			System.out.println(aux);
+			
+			if((pos - aux) > 0) {
+				
+				if((pos - aux) == 1) {
+					
+					colaDir1Ida.add(Direcciones.E);
+				}				
+				else {
+					
+					colaDir1Ida.add(Direcciones.S);
+				}
+			}			
+			else {
+				
+				if((pos - aux) == -1) {
+					
+					colaDir1Ida.add(Direcciones.O);
+				}
+				
+				else {
+					
+					colaDir1Ida.add(Direcciones.N);
+				}
+			}
+			
+			pos = aux;
+		}
+		
+		
+	}
+	
+	public void calcularRutaManoDerecha(int pos) {
+		
+		int idPuerta = lab.devolverSalaConPuerta().getIdSala();
+		Direcciones anterior = Direcciones.E;
+		Direcciones siguiente = Direcciones.S;
+		
+		while (idPuerta != pos) {
+			
+			switch (anterior) {
+			
+			case S:
+				
+				if(grafo.adyacente(pos, pos - 1)){
+					
+					siguiente = Direcciones.O;
+					anterior = Direcciones.E;
+					
+					colaDir2.add(siguiente);
+					System.out.println(siguiente);
+					pos--;
+				}
+				
+				else {
+					
+					anterior = Direcciones.O;
+				}
+				
+				
+				break;
+				
+			case E:
+				
+				if(grafo.adyacente(pos, pos + lab.getMaxColumnas())){
+					
+					siguiente = Direcciones.S;
+					anterior = Direcciones.N;
+					
+					colaDir2.add(siguiente);
+					System.out.println(siguiente);
+					pos += lab.getMaxColumnas();
+				}
+				
+				else {
+					
+					anterior = Direcciones.S;
+				}
+				
+				break;
+				
+			case N:
+				
+				if(grafo.adyacente(pos, pos + 1)){
+					
+					siguiente = Direcciones.E;
+					anterior = Direcciones.O;
+					
+					colaDir2.add(siguiente);
+					System.out.println(siguiente);
+					pos++;
+				}
+				
+				else {
+					
+					anterior = Direcciones.E;
+				}
+				
+				break;
+				
+			case O:
+				
+				if(grafo.adyacente(pos, pos - lab.getMaxColumnas())){
+					
+					siguiente = Direcciones.N;
+					anterior = Direcciones.S;
+					
+					colaDir2.add(siguiente);
+					System.out.println(siguiente);
+					pos -= lab.getMaxColumnas();
+				}
+				
+				else {
+					
+					anterior = Direcciones.N;
+				}
+				
+				break;
+			
+			}			
+		}	
+	}
+	
+	public void calcularRutaManoIzquierda(int pos) {
+		
+		int idPuerta = lab.devolverSalaConPuerta().getIdSala();
+		Direcciones anterior = Direcciones.N;
+		Direcciones siguiente = Direcciones.O;
+		
+		while (idPuerta != pos) {
+			
+			switch (anterior) {
+			
+			case S:
+				
+				if(grafo.adyacente(pos, pos + 1)){
+					
+					siguiente = Direcciones.E;
+					anterior = Direcciones.O;
+					
+					colaDir3.add(siguiente);
+					System.out.println(siguiente);
+					pos++;
+				}
+				
+				else {
+					
+					anterior = Direcciones.E;
+				}
+				
+				
+				break;
+				
+			case E:
+				
+				if(grafo.adyacente(pos, pos - lab.getMaxColumnas())){
+					
+					siguiente = Direcciones.N;
+					anterior = Direcciones.S;
+					
+					colaDir3.add(siguiente);
+					System.out.println(siguiente);
+					pos -= lab.getMaxColumnas();
+				}
+				
+				else {
+					
+					anterior = Direcciones.N;
+				}
+				
+				break;
+				
+			case N:
+				
+				if(grafo.adyacente(pos, pos - 1)){
+					
+					siguiente = Direcciones.O;
+					anterior = Direcciones.E;
+					
+					colaDir3.add(siguiente);
+					System.out.println(siguiente);
+					pos--;
+				}
+				
+				else {
+					
+					anterior = Direcciones.O;
+				}
+				
+				break;
+				
+			case O:
+				
+				if(grafo.adyacente(pos, pos + lab.getMaxColumnas())){
+					
+					siguiente = Direcciones.S;
+					anterior = Direcciones.N;
+					
+					colaDir3.add(siguiente);
+					System.out.println(siguiente);
+					pos += lab.getMaxColumnas();
+				}
+				
+				else {
+					
+					anterior = Direcciones.S;
+				}
+				
+				break;
+			
+			}			
+		}	
+	}	
+	
+	public void wrapper (int cursor) {
+		
+		ArrayList<Integer> historicoPaso = new ArrayList<Integer>();
+		boolean nodosVisitados[] = new boolean[lab.getMaxColumnas() * lab.getMaxFilas()];
+		
+		for (int i = 0; i < lab.getMaxFilas() * lab.getMaxColumnas(); i++) {
+			
+			nodosVisitados[i] = false;
+		}
+		
+		int idFin = lab.devolverSalaConPuerta().getIdSala();
+		
+		nodosVisitados[0] = true;
+		historicoPaso.add(0); 
+		
+		calcularRutaProfundidad(nodosVisitados,historicoPaso,idFin,1,cursor);
+		
+		IDADirecciones();
+	}
+	
+	private void swapArrayList (ArrayList<Integer> historicoPaso) {
+		
+		mejorCamino.clear();
+		
+		for (int i = 0; i < historicoPaso.size(); i++) {
+			
+			mejorCamino.add(historicoPaso.get(i));
+		}
+	}
+	
+	public void calcularRutaProfundidad(boolean[] nodosVisitados, ArrayList<Integer> historicoPaso, int idFin, int etapa, int cursor) {
+		
+		if (cursor == idFin) {
+			boolean distinto = false;
+			int i = 0;
+			
+			if (mejorCamino.size() == 0) {
+				
+				swapArrayList(historicoPaso);
+			}
+			
+			else {
+				
+				while (i < historicoPaso.size() && i < mejorCamino.size() && distinto == false) {
+					
+					if (historicoPaso.get(i) < mejorCamino.get(i)) {
+						
+						swapArrayList(historicoPaso);
+					}
+					
+					else if (historicoPaso.get(i) > mejorCamino.get(i)) {
+						
+						distinto = true;
+					}
+					
+					i++;
+				}
+			}
+		}
+		
+		else {
+			
+			// Ir al este
+			if (grafo.adyacente(cursor, cursor + 1) && nodosVisitados[cursor + 1] == false) {
+				
+				nodosVisitados[cursor + 1] = true;
+				historicoPaso.add(cursor + 1);
+				
+				calcularRutaProfundidad (nodosVisitados, historicoPaso, idFin, etapa + 1, cursor + 1);
+				
+				nodosVisitados[cursor + 1] = false;
+				historicoPaso.remove(etapa);
+			}
+			
+			// Ir al sur
+			
+			if (grafo.adyacente(cursor, cursor + lab.getMaxColumnas()) && nodosVisitados[cursor + lab.getMaxColumnas()] == false) {
+				
+				nodosVisitados[cursor + lab.getMaxColumnas()] = true;
+				historicoPaso.add(cursor + lab.getMaxColumnas());
+				
+				calcularRutaProfundidad (nodosVisitados, historicoPaso, idFin, etapa + 1, cursor + lab.getMaxColumnas());
+				
+				nodosVisitados[cursor + lab.getMaxColumnas()] = false;
+				historicoPaso.remove(etapa);
+			}
+			
+			// Ir al oeste
+			
+			if (grafo.adyacente(cursor, cursor - 1) && nodosVisitados[cursor - 1] == false) {
+				
+				nodosVisitados[cursor - 1] = true;
+				historicoPaso.add(cursor - 1);
+				
+				calcularRutaProfundidad (nodosVisitados, historicoPaso, idFin, etapa + 1, cursor - 1);
+				
+				nodosVisitados[cursor - 1] = false;
+				historicoPaso.remove(etapa);
+			}
+			
+			// Ir al norte
+			
+			if (grafo.adyacente(cursor, cursor - lab.getMaxColumnas()) && nodosVisitados[cursor - lab.getMaxColumnas()] == false) {
+				
+				nodosVisitados[cursor - lab.getMaxColumnas()] = true;
+				historicoPaso.add(cursor - lab.getMaxColumnas());
+				
+				calcularRutaProfundidad (nodosVisitados, historicoPaso, idFin, etapa + 1, cursor - lab.getMaxColumnas());
+				
+				nodosVisitados[cursor - lab.getMaxColumnas()] = false;
+				historicoPaso.remove(etapa);
+			}
+		}
+	}
+
+
+	
+	public Direcciones siguienteMovimientoMin() {
+		
+		if (colaDir1Ida.isEmpty()) {
+			
+			while (!pilaDir1Vuelta.isEmpty()) {
+				
+				colaDir1Ida.add(pilaDir1Vuelta.pop());
+			}
+		}
+		
+		else {
+			
+			pilaDir1Vuelta.push(colaDir1Ida.peek());
+		}
+		
+		return colaDir1Ida.poll();
+	}
+	
+	public Direcciones siguienteMovimientoDcha() {
+		
+		return colaDir2.poll();
+	}
+	
+	public Direcciones siguienteMovimientoIzq() {
+		
+		return colaDir3.poll();
+	}
+	
+	public Direcciones siguienteMovimientoProf() {
+		
+		return colaDir4.poll();
+	}
+}

@@ -1,0 +1,36 @@
+package Laberinto;
+import Otros.Llave;
+
+
+public class SalaConPuerta extends Sala{
+	
+	private Puerta puertaSalida;
+	
+	SalaConPuerta() {
+		
+		puertaSalida = new Puerta();
+	}
+	
+	SalaConPuerta(Llave codigoPuerta[], int numElementos, int profundidad, int nodosApertura) {
+		
+		puertaSalida = new Puerta();
+		configurarPuerta(codigoPuerta, numElementos, profundidad, nodosApertura);
+		
+	}
+	
+	public void ProbarLlave(Llave llavePrueba) {
+		
+		puertaSalida.probarLlave(llavePrueba);
+	}
+	
+	public boolean esPuertaAbierta() {
+		
+		return puertaSalida.esPuertaAbierta();
+	}
+	
+	public void configurarPuerta(Llave codigoPuerta[], int numElementos, int profundidad, int nodosApertura) {
+		
+		puertaSalida.configurarPuerta(codigoPuerta, numElementos, profundidad, nodosApertura);
+	}
+	
+}

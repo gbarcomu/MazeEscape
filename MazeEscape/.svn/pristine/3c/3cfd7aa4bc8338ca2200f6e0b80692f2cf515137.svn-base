@@ -1,0 +1,152 @@
+package Robot;
+import EstrucurasDeDatos.Cola;
+import EstrucurasDeDatos.Pila;
+import Laberinto.Laberinto;
+import Laberinto.Sala;
+import Otros.Direcciones;
+import Otros.Llave;
+
+
+public abstract class Robots {
+
+	protected String nombreRobot;
+	protected char idRobot;
+	
+	protected Pila <Llave> llavero;
+	
+	protected int posicionX;
+	protected int posicionY;
+	
+	private int turnoRobot;
+	
+	private Cola<Direcciones> rutaRobot;
+	
+	public Robots () {
+		
+		turnoRobot = 0;
+		nombreRobot = "";
+		idRobot = '0';
+		posicionX = 0;
+		posicionY = 0;
+		llavero = new Pila<Llave> ();
+	}
+	
+	public Robots (String nombre, int x, int y) {
+		
+		nombreRobot = nombre;
+		posicionX = x;
+		posicionY = y;
+		llavero = new Pila<Llave> ();
+		
+		rutaRobot = new Cola<Direcciones> ();
+		rutaRobot.encolar(Direcciones.N);
+		rutaRobot.encolar(Direcciones.S);
+		rutaRobot.encolar(Direcciones.S);
+		rutaRobot.encolar(Direcciones.E);
+		rutaRobot.encolar(Direcciones.E);
+			
+	}	
+	
+	public void siguienteMovimiento () {
+		
+		Direcciones aux = rutaRobot.primero();
+		rutaRobot.desencolar();
+		rutaRobot.encolar(aux);
+		
+	}
+	
+	public abstract void interactuarPuerta (Laberinto laberinto);
+	
+	public void mover(Laberinto laberinto) {
+		
+		Sala salaAux = laberinto.devovlerSala(posicionX, posicionY);
+		moverRobot(laberinto, salaAux);
+		siguienteMovimiento();
+		System.out.println("El robot " + nombreRobot + " de tipo " + idRobot + " se ha movido");
+	}
+	
+	public abstract void interactuarLlave (Laberinto laberinto);
+	
+	public String getNombre() {
+		
+		return nombreRobot;
+	}
+	
+	public void setTurnoRobot(int turno) {
+		
+		turnoRobot = turno;
+	}
+	
+	public int getTurnoRobot() {
+		
+		return turnoRobot;
+	}
+	
+	public void incrementarTurno() {
+		
+		turnoRobot++;
+	}
+	
+	public boolean llaverVacio () {
+		
+		return llavero.esVacia();
+	}
+	
+	public void robotHaceSusCosas(Laberinto laberinto) {
+		
+		interactuarPuerta (laberinto);
+		interactuarLlave (laberinto);
+		
+	}
+	
+	private int posicionToId(Laberinto laberinto) {
+		
+		return posicionY * laberinto.getMaxColumnas() + posicionX;
+	}
+	
+	private void moverRobot(Laberinto laberinto, Sala sala) {
+		
+		switch (rutaRobot.primero()) {
+					
+			case N:
+			
+				if(posicionX != 0) {
+							
+					posicionX -= 1;
+				}
+						
+				break;
+						
+			case E:
+						
+				if(posicionY != laberinto.getMaxColumnas() -1) {
+							
+					posicionY += 1;
+				}
+						
+				break;
+						
+			case S:
+						
+				if(posicionX != laberinto.getMaxFilas() -1) {
+							
+					posicionX += 1;
+				}
+						
+				break;
+						
+			case O:
+				
+				if(posicionY != 0) {
+							
+					posicionY -= 1;
+				}
+					
+				break;	
+			}
+		Sala salaAux;
+		salaAux = laberinto.devovlerSala(posicionX, posicionY);
+		salaAux.robotEntra(sala.robotSale());
+	}
+}
+

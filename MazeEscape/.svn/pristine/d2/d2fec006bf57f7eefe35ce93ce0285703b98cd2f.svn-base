@@ -1,0 +1,259 @@
+package Otros;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+import EstrucurasDeDatos.Grafo;
+import Laberinto.Laberinto;
+
+public class MovimientoRobots {
+
+	private Queue<Direcciones> colaDir1;
+	private Queue<Direcciones> colaDir2;
+	private Queue<Direcciones> colaDir3;
+	private Laberinto lab;
+	private Grafo grf;
+	
+	public MovimientoRobots() {
+		
+		colaDir1 = new LinkedList<Direcciones>();
+		colaDir2 = new LinkedList<Direcciones>();
+		colaDir3 = new LinkedList<Direcciones>();
+		lab = Laberinto.getInstancia();
+		grf = lab.getGrafo();;
+		
+	}
+	
+	public void calcularRutaMinima(int pos) {
+		
+		int idPuerta = lab.devolverSalaConPuerta().getIdSala();
+		
+		while (idPuerta != pos) {
+			
+			int aux;
+			aux = grf.siguiente(pos, idPuerta); 
+			
+			System.out.println(aux);
+			
+			if((pos - aux) > 0) {
+				
+				if((pos - aux) == 1) {
+					
+					colaDir1.add(Direcciones.E);
+				}				
+				else {
+					
+					colaDir1.add(Direcciones.S);
+				}
+			}			
+			else {
+				
+				if((pos - aux) == -1) {
+					
+					colaDir1.add(Direcciones.O);
+				}
+				
+				else {
+					
+					colaDir1.add(Direcciones.N);
+				}
+			}
+			
+			pos = aux;
+		}
+		
+		
+	}
+	
+	public void calcularRutaManoDerecha(int pos) {
+		
+		int idPuerta = lab.devolverSalaConPuerta().getIdSala();
+		Direcciones anterior = Direcciones.E;
+		Direcciones siguiente = Direcciones.S;
+		
+		while (idPuerta != pos) {
+			
+			switch (anterior) {
+			
+			case S:
+				
+				if(grf.adyacente(pos, pos - 1)){
+					
+					siguiente = Direcciones.O;
+					anterior = Direcciones.E;
+					
+					colaDir2.add(siguiente);
+					System.out.println(siguiente);
+					pos--;
+				}
+				
+				else {
+					
+					anterior = Direcciones.O;
+				}
+				
+				
+				break;
+				
+			case E:
+				
+				if(grf.adyacente(pos, pos + lab.getMaxColumnas())){
+					
+					siguiente = Direcciones.S;
+					anterior = Direcciones.N;
+					
+					colaDir2.add(siguiente);
+					System.out.println(siguiente);
+					pos += lab.getMaxColumnas();
+				}
+				
+				else {
+					
+					anterior = Direcciones.S;
+				}
+				
+				break;
+				
+			case N:
+				
+				if(grf.adyacente(pos, pos + 1)){
+					
+					siguiente = Direcciones.E;
+					anterior = Direcciones.O;
+					
+					colaDir2.add(siguiente);
+					System.out.println(siguiente);
+					pos++;
+				}
+				
+				else {
+					
+					anterior = Direcciones.E;
+				}
+				
+				break;
+				
+			case O:
+				
+				if(grf.adyacente(pos, pos - lab.getMaxColumnas())){
+					
+					siguiente = Direcciones.N;
+					anterior = Direcciones.S;
+					
+					colaDir2.add(siguiente);
+					System.out.println(siguiente);
+					pos -= lab.getMaxColumnas();
+				}
+				
+				else {
+					
+					anterior = Direcciones.N;
+				}
+				
+				break;
+			
+			}			
+		}	
+	}
+	
+	public void calcularRutaManoIzquierda(int pos) {
+		
+		int idPuerta = lab.devolverSalaConPuerta().getIdSala();
+		Direcciones anterior = Direcciones.N;
+		Direcciones siguiente = Direcciones.O;
+		
+		while (idPuerta != pos) {
+			
+			switch (anterior) {
+			
+			case S:
+				
+				if(grf.adyacente(pos, pos + 1)){
+					
+					siguiente = Direcciones.E;
+					anterior = Direcciones.O;
+					
+					colaDir3.add(siguiente);
+					System.out.println(siguiente);
+					pos++;
+				}
+				
+				else {
+					
+					anterior = Direcciones.E;
+				}
+				
+				
+				break;
+				
+			case E:
+				
+				if(grf.adyacente(pos, pos - lab.getMaxColumnas())){
+					
+					siguiente = Direcciones.N;
+					anterior = Direcciones.S;
+					
+					colaDir3.add(siguiente);
+					System.out.println(siguiente);
+					pos -= lab.getMaxColumnas();
+				}
+				
+				else {
+					
+					anterior = Direcciones.N;
+				}
+				
+				break;
+				
+			case N:
+				
+				if(grf.adyacente(pos, pos - 1)){
+					
+					siguiente = Direcciones.O;
+					anterior = Direcciones.E;
+					
+					colaDir3.add(siguiente);
+					System.out.println(siguiente);
+					pos--;
+				}
+				
+				else {
+					
+					anterior = Direcciones.O;
+				}
+				
+				break;
+				
+			case O:
+				
+				if(grf.adyacente(pos, pos + lab.getMaxColumnas())){
+					
+					siguiente = Direcciones.S;
+					anterior = Direcciones.N;
+					
+					colaDir3.add(siguiente);
+					System.out.println(siguiente);
+					pos += lab.getMaxColumnas();
+				}
+				
+				else {
+					
+					anterior = Direcciones.S;
+				}
+				
+				break;
+			
+			}			
+		}	
+	}	
+	
+
+
+	
+	public Direcciones siguienteMovimiento() {
+		
+		return colaDir1.poll();
+	}
+	
+	
+}

@@ -1,0 +1,12 @@
+package Robot;
+
+import Otros.Direcciones;
+
+public class Bender extends RobotRecogedor {
+
+	public Bender (String nombre, Direcciones[] direcciones) {
+		
+		super (nombre, 0, 0, direcciones);
+		super.idRobot = 'B';
+	}
+}

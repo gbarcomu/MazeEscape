@@ -1,0 +1,103 @@
+/**
+* Implementación de la clase Sala
+* @version 1.0
+* @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+* Asignatura Desarrollo de Programas<br/>
+* Curso 14/15
+* Nombre grupo: IngenierosEnProcesión
+* Numero de entrega: EC2
+*/
+package Laberinto;
+
+import java.util.Queue;
+import java.util.*;
+import java.util.Stack;
+import Otros.Llave;
+import Robot.Robots;
+
+public class Sala {
+	/** Cola de robots que almacena los robots que hay en cada sala.*/
+	private Queue<Robots> robotsEnSala;
+	/** Pila de llaves que almacena las llaves que hay en la sala.*/
+	private Stack<Llave> llavesEnSala;
+	/** Atributo de sala.*/
+	private int IDSala;
+
+	/** Constructor por defecto de la clase sala.*/
+	public Sala () {
+		
+		IDSala = -1;		
+		llavesEnSala = new Stack<Llave>();
+		robotsEnSala = new LinkedList<Robots>();
+	}
+	/** Método que establece el id de la sala.*/
+	public void setIdSala (int id) {
+		
+		IDSala = id;
+	}
+	/** Método que devuelve el id de la sala.*/
+	public int getIdSala() {
+		
+		return IDSala;
+	}
+	/** Método que almacena un robot en la cola de robots de la sala.*/
+	public void robotEntra (Robots robot) {
+		
+		robotsEnSala.add(robot);
+	}
+	/** Método que devuelve verdadero si hay robots en la cola de robots de la sala. Devuelve falso en caso contrario.*/
+	public boolean hayRobot() {
+		
+		if(robotsEnSala.isEmpty()) {
+			
+			return false;
+		}
+		
+		else {
+			
+			return true;			
+		}		
+	}
+	/** Método que obtiene el primer robots almacenado en la estructura de datos cola.*/
+	public Robots mostrarRobot() {
+	
+		return robotsEnSala.peek();
+	}
+	/** Método que extrae(desencola) un robots de la cola de robots de la sala.*/
+	public Robots robotSale () {
+		
+		Robots robotAux = robotsEnSala.peek();
+		robotsEnSala.remove();
+		
+		return robotAux;
+	}
+	/** Método que nos permite repartir las llaves en orden por las salas con llaves.*/
+	public void repartirLlavesOrdenSala(Llave llave) {
+		
+		llavesEnSala.push(llave);
+	}
+	/** Método que devuelve una llave.*/
+	public Llave recogerLlaveSala() {
+		
+		return llavesEnSala.pop();
+	}
+	/** Método que almacena una llave en la pila de la sala.*/
+	public void dejarLlaveSala(Llave llave) {
+		
+		llavesEnSala.push(llave);
+	}
+	/** Método que devuelve verdadero si la pila de llaves de la sala está vacía. Devuelve falso en caso contrario.*/
+	public boolean llaveroVacio(){
+		
+		if (llavesEnSala.isEmpty()) {
+			
+			return true;
+		}
+		
+		else {
+			
+			return false;
+		}
+	}
+	
+}

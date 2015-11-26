@@ -1,0 +1,67 @@
+/**
+* Implementación de la clase RobotRecogedor
+* @version 2.0
+* @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+* Asignatura Desarrollo de Programas<br/>
+* Curso 14/15
+* Nombre grupo: IngenierosEnProcesión
+* Numero de entrega: EC2
+*/
+package Robot;
+import Laberinto.Laberinto;
+import Laberinto.Sala;
+import Laberinto.SalaConPuerta;
+import Otros.Llave;
+
+
+public class RobotRecogedor extends Robots {
+	/** Constructor parametrizado de la clase robotRecogedor.*/
+	public RobotRecogedor (String nombre, int x, int y, int  turno) {
+	
+		super(nombre, x, y, turno);
+	}
+	/** Méotdo que nos permite intentar abrir la puerta.*/
+	protected void interactuarPuerta (Laberinto laberinto) {		
+
+		Sala salaAux = laberinto.devolverSala(posicionX, posicionY);
+		
+		if (salaAux instanceof SalaConPuerta) {
+		
+			if(!llaverVacio()) {
+
+				Llave llaveAux = llavero.lastElement();					
+				((SalaConPuerta) salaAux).ProbarLlave(llaveAux);									
+				llavero.pop();
+			}
+			
+			if(((SalaConPuerta) salaAux).esPuertaAbierta()) {
+				
+				laberinto.devovlerSalaGanadores().robotEntra(salaAux.robotSale());
+			}
+			
+			else {
+				
+				salaAux.robotEntra(salaAux.robotSale());
+			}			
+		}
+		
+		else {
+			
+			mover (laberinto);
+		}
+	}
+	/** Método que nos permite recoger una llave de las salas del laberinto.*/
+	protected void interactuarLlave (Laberinto laberinto) {
+			
+		Sala salaAux = laberinto.devolverSala(posicionX, posicionY);
+		
+		if (!salaAux.llaveroVacio()) {
+			
+			Llave llaveAux;
+			
+			llaveAux = salaAux.recogerLlaveSala();
+			llavero.push(llaveAux);
+
+		}
+	}	
+}

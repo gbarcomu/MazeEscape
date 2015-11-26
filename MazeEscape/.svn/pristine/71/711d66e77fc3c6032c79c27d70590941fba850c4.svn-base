@@ -1,0 +1,88 @@
+package Laberinto;
+import EstrucurasDeDatos.Cola;
+import EstrucurasDeDatos.Pila;
+import Otros.Llave;
+import Robot.Robots;
+
+
+public class Sala {
+
+	private Cola<Robots> robotsEnSala;
+	private Pila<Llave> llavesEnSala;
+	
+	private int IDSala;
+	
+	Sala () {
+		
+		IDSala = -1;		
+		llavesEnSala = new Pila<Llave>();
+		robotsEnSala = new Cola<Robots>();
+	}
+	public void setIdSala (int id) {
+		
+		IDSala = id;
+	}
+	
+	public int getIdSala() {
+		
+		return IDSala;
+	}
+	
+	public void robotEntra (Robots robot) {
+		
+		robotsEnSala.encolar(robot);
+	}
+	
+	
+	public boolean hayRobot() {
+		
+		if(robotsEnSala.esVacia()) {
+			
+			return false;
+		}
+		
+		else {
+			
+			return true;			
+		}		
+	}
+	public Robots mostrarRobot() {
+		
+		return robotsEnSala.primero();
+	}
+	public Robots robotSale () {
+		
+		Robots robotAux = robotsEnSala.primero();
+		robotsEnSala.desencolar();
+		
+		return robotAux;
+	}
+	
+	public void repartirLlavesOrdenSala(Llave llave) {
+		
+		llavesEnSala.apilar(llave);	
+	}
+	
+	public Llave recogerLlaveSala() {
+		
+		Llave aux = llavesEnSala.getDatoCima();
+		llavesEnSala.desapilar();
+		
+		return aux;
+	}
+	
+	public boolean llaveroVacio(){
+		
+		if (llavesEnSala.esVacia()) {
+			
+			return true;
+		}
+		
+		else {
+			
+			return false;
+		}
+	}
+	
+}
+

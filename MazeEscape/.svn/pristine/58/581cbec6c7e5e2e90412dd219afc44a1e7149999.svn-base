@@ -1,0 +1,176 @@
+package InteractuarFicheros;
+
+import java.io.*;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
+import EstrucurasDeDatos.Grafo;
+import Laberinto.Laberinto;
+import Laberinto.Sala;
+import Otros.Direcciones;
+import Otros.Llave;
+import Robot.Robots;
+
+public class VolcarFichero {
+
+	private Laberinto lab;
+	private Queue<Robots> robotsEnSalaAux;
+	private Stack<Llave> llavesEnSalaAux;
+	
+	public VolcarFichero () {
+	
+		lab = Laberinto.getInstancia();
+		robotsEnSalaAux = new LinkedList<Robots>();
+		llavesEnSalaAux = new Stack<Llave>();
+	}
+	
+	public void volcadoVarios (PrintWriter pw){
+		
+		pw.println ("(turno:" + lab.getTurno() + ")");
+		pw.println ("(laberinto:" + ((lab.getMaxFilas()*lab.getMaxColumnas())-1) + ")");
+		
+		String estado;
+		
+		if(lab.devolverSalaConPuerta().esPuertaAbierta()) {
+			
+			estado = "abierta";			
+		}
+	
+		else {
+			
+			estado = "cerrada";
+		}
+//		String []llaves = null; 
+//		LinkedList<Llave> llavesLab = 	lab.devolverSalaConPuerta().mostrarLlavesPuerta();
+//		for (int i = 0; i < llavesLab.size(); i++) {
+//			
+//			System.out.println(llavesLab.get(i).getIdLlave());
+//					
+//		}
+		
+		pw.println ("(puerta:" + estado + ":" + lab.getProfundidadPuerta() + ":" + ")");
+		//+ lab.devolverSalaConPuerta().mostrarLlavesPuerta() +
+		//(puerta:<estado>:<altura de apertura>:<llaves cerradura>:<llaves probadas>)
+	}
+	
+	public void volcadoSalas(PrintWriter pw) {
+		
+		Llave llaveAux;
+		for (int i = 0; i < lab.getMaxFilas(); i++) {
+			
+			for (int j = 0; j< lab.getMaxColumnas(); j++) {
+				
+				if (!lab.devovlerSala(i, j).llaveroVacio()) {
+					
+					pw.print ("(sala:" + lab.devovlerSala(i, j).getIdSala() + ":");
+								
+					while(!lab.devovlerSala(i, j).llaveroVacio()) {
+						
+						llaveAux = lab.devovlerSala(i, j).recogerLlaveSala();
+						pw.print (" " + llaveAux.getIdLlave());
+						llavesEnSalaAux.push(llaveAux);
+					}
+					pw.println(")");
+				}
+				recomponerLlaves(i,j);
+
+			}
+		}
+	}
+	
+	
+	public void volcadoRobots(PrintWriter pw) {
+		Llave llaveAux;
+		
+		for (int i = 0; i < lab.getMaxFilas(); i++) {
+			
+			for (int j = 0; j< lab.getMaxColumnas(); j++) {
+
+				while (lab.devovlerSala(i, j).hayRobot()) {
+					
+					Robots robAux = lab.devovlerSala(i, j).robotSale();
+					pw.print("("+ robAux.getNombre() + ":" + robAux.getIdRobot()
+							+ ":" + i + ":" + j + ": ");
+					
+					robotsEnSalaAux.add(robAux);
+					
+					while(!robAux.llaverVacio()) {
+						
+						llaveAux = robAux.sacarLlave();
+						pw.print (llaveAux.getIdLlave() + " ");
+						llavesEnSalaAux.push(llaveAux);
+					}
+					recomponerLlaves(i,j);
+					
+					pw.println(")");
+				}
+				recomponerRobots(i,j);
+			}
+		}			
+		
+		while (lab.devovlerSalaGanadores().hayRobot()) {
+			
+			Robots robAux = lab.devovlerSalaGanadores().robotSale();
+			
+			pw.println("("+ robAux.getNombre() + ":" + robAux.getIdRobot()
+					+ ":" + -1 + ":" + -1 + ") ");
+		}
+	}
+	private void recomponerRobots(int i, int j) {
+		
+		Robots rob;
+		while (!robotsEnSalaAux.isEmpty()) {
+			
+			rob = robotsEnSalaAux.poll();
+			lab.devovlerSala(i, j).robotEntra(rob);
+		}
+	}
+	private void recomponerLlaves(int i, int j) {
+		
+		Llave llaveAux;
+		while (!llavesEnSalaAux.isEmpty()) {
+			
+			llaveAux = llavesEnSalaAux.pop();
+			lab.devovlerSala(i, j).dejarLlaveSala(llaveAux);
+		}
+	}
+	
+	public void volcarLaberinto (PrintWriter pw){
+		
+		Grafo gAux = lab.getGrafo();
+		
+		for (int j = 0; j < lab.getMaxColumnas(); j++) {
+		
+			pw.print(" _");
+		}		
+
+		pw.println();
+		
+		for (int i = 0; i < lab.getMaxFilas()-1; i++) {
+			
+			for (int j = 0; j< lab.getMaxColumnas(); j++) {
+				
+				if(j != lab.getMaxColumnas()-1) {
+					
+					if(gAux.adyacente(lab.matrizAVector(i, j), lab.matrizAVector(i, j+1))) {
+						
+						pw.print("|");
+					}
+					
+				}
+				
+				if(gAux.adyacente(lab.matrizAVector(i, j), lab.matrizAVector(i+1, j))) {
+					
+					pw.print("_");
+				}
+				
+			}
+			
+			pw.print("|");
+			pw.println();
+		}
+		
+		pw.println();
+	}
+}

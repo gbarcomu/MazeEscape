@@ -1,0 +1,18 @@
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+
+public class LaberintoTest {
+
+	@Test
+	public void testInsertarRobot() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testLlaveroGenerico() {
+		fail("Not yet implemented");
+	}
+
+} // Guillermo

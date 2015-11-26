@@ -1,0 +1,10 @@
+--Laberinto
+LABERINTO#10#10#99#7#
+--Robots de la simulacion
+ASIMO#asimo#A#1#
+BENDER#bender#B#3#
+SPIRIT#spirit#S#7#
+BENDER#bender#N#4#
+SONNY#sonny#Y#5#
+ASIMO#asimo#O#2#
+SPIRIT#spirit#T#5#

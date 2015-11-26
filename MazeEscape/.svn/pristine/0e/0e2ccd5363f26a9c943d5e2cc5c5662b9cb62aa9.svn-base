@@ -1,0 +1,178 @@
+/**
+* Implementación de la clase Robots
+* @version 2.0
+* @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+* Asignatura Desarrollo de Programas<br/>
+* Curso 14/15
+* Nombre grupo: IngenierosEnProcesión
+* Numero de entrega: EC2
+*/
+package Robot;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Stack;
+
+import EstrucurasDeDatos.Cola;
+import EstrucurasDeDatos.Pila;
+import Laberinto.Laberinto;
+import Laberinto.Sala;
+import Otros.Direcciones;
+import Otros.Llave;
+
+
+public abstract class Robots {
+	/** Atributo para establecer el nombre del robots.*/
+	protected String nombreRobot;
+	/** Atributo para establecer el identificador del robot.*/
+	protected char idRobot;
+	/** Pila dedicada a almacenar las llaves que tiene cada robot.*/
+	protected Stack<Llave> llavero;
+	/** Entero que establece la posicionX(filas) de la matriz.*/
+	protected int posicionX;
+	/** Entero que establece la posicionY(columnas) de la matriz.*/
+	protected int posicionY;
+	/** Entero que almacena el turno actual de cada robot..*/
+	private int turnoRobot;
+	/** Cola de direcciones destinada a guardar la ruta de cada robot.*/
+	private Queue<Direcciones> rutaRobot;
+	/** Constructor por defecto de la clase robots.*/
+	Robots () {
+		
+		turnoRobot = 0;
+		nombreRobot = "";
+		idRobot = '0';
+		posicionX = 0;
+		posicionY = 0;
+		llavero = new Stack<Llave> ();
+	}
+	/** Constructor parametrizado de la clase robots.*/
+	Robots (String nombre, int x, int y, int turno, Direcciones[] direcciones) {
+		
+		nombreRobot = nombre;
+		posicionX = x;
+		posicionY = y;
+		llavero = new Stack<Llave> ();		
+		rutaRobot = new LinkedList<Direcciones> ();
+		
+		cargarDirecciones (direcciones);		
+	}
+	/** Método mediante el que cargamos las direcciones de los robots en la cola.*/
+	private void cargarDirecciones (Direcciones[] direcciones) {
+		
+		for (int i = 0; i < direcciones.length; i++) {
+			
+			rutaRobot.add(direcciones[i]);
+		}
+	}
+	/** Método que establece el siguiente movimiento del robot.*/
+	private void siguienteMovimiento () {
+		
+		Direcciones aux = rutaRobot.poll();
+		rutaRobot.add(aux);		
+	}
+	/** Clase que nos permite interactuar con la puerta del laberinto.*/
+	protected abstract void interactuarPuerta (Laberinto laberinto);
+	/** Método que nos permite mover los robots.*/
+	protected void mover(Laberinto laberinto) {
+		
+		Sala salaAux = laberinto.devovlerSala(posicionX, posicionY);			
+		moverRobot(laberinto, salaAux);
+		siguienteMovimiento();
+	}
+	/** Método que nos permite interactuar con las llaves que encontremos en las salas del laberinto. */
+	protected abstract void interactuarLlave (Laberinto laberinto);
+	/** Método que devuelve el nombre del robot.*/
+	public String getNombre() {
+		
+		return nombreRobot;
+	}
+	/** Método que nos permite establecer el turno de cada robot.*/
+	public void setTurnoRobot(int turno) {
+		
+		turnoRobot = turno;
+	}
+	/** Método que devuelve el turno de cada robot.*/
+	public int getTurnoRobot() {
+		
+		return turnoRobot;
+	}
+	/** Método que nos permite incrementar el turno de cada robot.*/
+	public void incrementarTurno() {
+		
+		turnoRobot++;
+	}
+	/** Boleano que nos devuelve verdadero si el llavero de cada robot esta vacío. Falso en caso contrario.*/
+	public boolean llaverVacio () {
+		
+		return llavero.isEmpty();
+	}
+	/** Método que nos permite que cada robot interactue con la puerta y con la llave.*/
+	public void robotHaceSusCosas(Laberinto laberinto) {
+		
+		interactuarPuerta (laberinto);
+		interactuarLlave (laberinto);		
+	}
+	/** Método que nos devuelve una posición concreta del laberinto.*/
+	public int posicionToId(Laberinto laberinto) {
+		
+		return posicionY * laberinto.getMaxColumnas() + posicionX;
+	}
+	/** Método encargado de comprobar que el robot se puede mover y de ser así moverlo.*/
+	private void moverRobot(Laberinto laberinto, Sala sala) {
+		
+		switch (rutaRobot.peek()) {
+					
+			case N:
+			
+				if(posicionX != 0) {
+							
+					posicionX -= 1;
+				}
+						
+				break;
+						
+			case E:
+						
+				if(posicionY != laberinto.getMaxColumnas() -1) {
+							
+					posicionY += 1;
+				}
+						
+				break;
+						
+			case S:
+						
+				if(posicionX != laberinto.getMaxFilas() -1) {
+							
+					posicionX += 1;
+				}
+						
+				break;
+						
+			case O:
+				
+				if(posicionY != 0) {
+							
+					posicionY -= 1;
+				}
+					
+				break;	
+			}
+		Sala salaAux;
+		salaAux = laberinto.devovlerSala(posicionX, posicionY);
+		salaAux.robotEntra(sala.robotSale());
+	}
+	/** Método que nos permite apilar una llave en el llavero del robot.*/
+	protected void guardarLlave(Llave llave){
+		
+		llavero.push(llave);
+	}
+	
+	/** Método que nos permite desapilar una llave del llavero del robot.*/
+	public Llave sacarLlave (){
+		
+		return llavero.pop();
+	}
+
+}
+

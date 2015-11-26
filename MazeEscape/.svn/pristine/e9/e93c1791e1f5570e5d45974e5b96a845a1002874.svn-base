@@ -1,0 +1,21 @@
+package Laberinto;
+import Otros.Llave;
+
+
+public class SalaConPuerta extends Sala{
+	
+	private Puerta puertaSalida;
+	
+	SalaConPuerta() {
+		
+		puertaSalida = new Puerta();
+	}
+	
+	SalaConPuerta(Llave codigoPuerta[], int numElementos, int profundidad, int nodosApertura) {
+		
+		puertaSalida = new Puerta();
+		puertaSalida.configurarPuerta(codigoPuerta, numElementos, profundidad, nodosApertura);
+		
+	}
+	
+}

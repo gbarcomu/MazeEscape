@@ -1,0 +1,17 @@
+
+public class SalaConPuerta extends Sala{
+	
+	private Puerta puertaSalida;
+	
+	SalaConPuerta() {
+		
+		puertaSalida = new Puerta();
+	}
+	public void colocarPuertaSalida(Llave codigoPuerta[], int numElementos, int profundidad, int nodosApertura) {
+		
+		puertaSalida = new Puerta();
+		puertaSalida.configurarPuerta(codigoPuerta, numElementos, profundidad, nodosApertura);
+		
+	}
+	
+}

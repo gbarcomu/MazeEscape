@@ -1,0 +1,45 @@
+/**
+* Implementación de la clase Sala
+* @version 1.0
+* @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+* Asignatura Desarrollo de Programas<br/>
+* Curso 14/15
+* Nombre grupo: IngenierosEnProcesión
+* Numero de entrega: EC2
+*/
+package Laberinto;
+
+import Otros.Llave;
+
+public class SalaConPuerta extends Sala{
+	/** Atributo de tipo puerta que establece la puerta de salida.*/
+	private Puerta puertaSalida;
+	/** Constructor por defecto de la SalaConPuerta.*/
+	public SalaConPuerta() {
+		
+		puertaSalida = new Puerta();
+	}
+	/** Constructor parametrizado de la SalaConPuerta.*/
+	SalaConPuerta(Llave codigoPuerta[], int numElementos, int profundidad, int nodosApertura) {
+		
+		puertaSalida = new Puerta();
+		configurarPuerta(codigoPuerta, numElementos, profundidad, nodosApertura);
+		
+	}
+	/** Método que nos permite probar una llave en la puerta de salida.*/
+	public void ProbarLlave(Llave llavePrueba) {
+		
+		puertaSalida.probarLlave(llavePrueba);
+	}
+	/** Método que nos devuelve el estado de la puerta de salida. */
+	public boolean esPuertaAbierta() {
+		
+		return puertaSalida.esPuertaAbierta();
+	}
+	/** Método que nos permite configurar la puerta de salida con los parametros dados.*/
+	public void configurarPuerta(Llave codigoPuerta[], int numElementos, int profundidad, int nodosApertura) {
+		
+		puertaSalida.configurarPuerta(codigoPuerta, numElementos, profundidad, nodosApertura);
+	}
+	
+}

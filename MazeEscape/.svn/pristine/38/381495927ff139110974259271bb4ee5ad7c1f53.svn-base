@@ -1,0 +1,79 @@
+package InteractuarFicheros;
+
+import java.io.*;
+
+import Laberinto.Laberinto;
+import Robot.Robots;
+
+public class VolcarFichero {
+
+	private Laberinto lab;
+	
+	public VolcarFichero () {
+	
+		lab = Laberinto.getInstancia();
+	}
+	
+	public void volcadoVarios (PrintWriter pw){
+		
+		pw.println ("(turno:" + lab.getTurno() + ")");
+		pw.println ("(laberinto:" + ((lab.getMaxFilas()*lab.getMaxColumnas())-1) + ")");
+	}
+	
+	public void volcadoSalas(PrintWriter pw) {
+		
+		for (int i = 0; i < lab.getMaxFilas(); i++) {
+			
+			for (int j = 0; j< lab.getMaxColumnas(); j++) {
+				
+				if (!lab.devovlerSala(i, j).llaveroVacio()) {
+					
+					pw.print ("(sala:" + lab.devovlerSala(i, j).getIdSala() + ":");
+				
+				
+					while(!lab.devovlerSala(i, j).llaveroVacio()) {
+						
+						pw.print (" " + lab.devovlerSala(i, j).recogerLlaveSala().getIdLlave());
+					}
+					pw.println(")");
+				}
+
+
+			}
+		}
+	}
+	
+	
+	public void volcadoRobots(PrintWriter pw) {
+
+		
+		for (int i = 0; i < lab.getMaxFilas(); i++) {
+			
+			for (int j = 0; j< lab.getMaxColumnas(); j++) {
+
+				while (lab.devovlerSala(i, j).hayRobot()) {
+					
+					Robots robAux = lab.devovlerSala(i, j).robotSale();
+					
+					pw.print("("+ robAux.getNombre() + ":" + robAux.getIdRobot()
+							+ ":" + i + ":" + j + ": ");
+										
+					while(!robAux.llaverVacio()) {
+						
+						pw.print (robAux.sacarLlave().getIdLlave() + " ");
+					}
+					
+					pw.println(")");
+				}
+			}
+		}			
+		
+		while (lab.devovlerSalaGanadores().hayRobot()) {
+			
+			Robots robAux = lab.devovlerSalaGanadores().robotSale();
+			
+			pw.println("("+ robAux.getNombre() + ":" + robAux.getIdRobot()
+					+ ":" + -1 + ":" + -1 + ") ");
+		}
+	}
+}

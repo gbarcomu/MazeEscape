@@ -1,0 +1,180 @@
+package Otros;
+
+ /**
+ * Impñementacion de la clase pruebaLaberinto
+ * @version 1.0
+ * @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+ * Asignatura Desarrollo de Programas<br/>
+ * Curso 14/15
+ * Nombre grupo: IngenierosEnProcesion
+ * Numero de entrega: EC1
+ */
+public class PruebaLaberinto {
+	
+	enum Dir {S, E, N, O};
+	
+//	public void simular() {
+//		
+////		
+////		
+////		
+//	}
+
+	public static void main(String[] args) {
+		
+		//Laberinto lab = new Laberinto();
+		//lab.mostrarLlavesRestantes();
+		
+		
+		//RobotRecogedor benderB = new RobotRecogedor();
+
+//	    Llave[] datos = {new Llave(1), new Llave(3), new Llave(5), new Llave(7), new Llave(9), new Llave(11),
+//				   new Llave(13), new Llave(15), new Llave(17), new Llave(19), new Llave(21), new Llave(23),
+//				   new Llave(25), new Llave(27), new Llave(29)};
+//	    
+//	    boolean puertaCerrada;
+//	    Puerta puertaPrueba = new Puerta (datos, 15);
+//	    
+//	    // Casos de Prueba
+//	    
+//	    /** Se introducen todas las llaves y la puerta se abre correctamente.*/
+//	    Llave[] prueba1 = {new Llave(1), new Llave(3), new Llave(5), new Llave(7), new Llave(9), new Llave(11),
+//				   new Llave(13), new Llave(15), new Llave(17), new Llave(19), new Llave(21), new Llave(23),
+//				   new Llave(25), new Llave(27), new Llave(29)};
+//	    
+//	    puertaCerrada = true;
+//	    
+//	    System.out.println ("    PRUEBA NUMERO 1: ");
+//	    
+//	    for (int i = 0; i < 15 && puertaCerrada; i++) {
+//	    	
+//	    	System.out.println ("Se procece a probar la llave " + prueba1[i].getIdLlave());
+//	    	if (!puertaPrueba.probarLlave (prueba1[i])){
+//	    		
+//	    		System.out.println ("Llave no valida"); 
+//	    	}
+//	    	
+//	    	if(puertaPrueba.esPuertaAbierta()) {
+//	    		
+//	    		puertaCerrada = false;
+//	    		System.out.println ("Se ha abierto la puerta");
+//	    	}
+//	    }
+//	    
+//	    puertaPrueba.profundidadYnNodosMinimos();
+//	    	    
+//	    /**Probamos a variar la profundiad y numero de nodos y a meter llaves repetidas.*/   
+//	    Llave[] prueba2 = {new Llave(1), new Llave(3), new Llave(5), new Llave(7), new Llave(9), new Llave(11),
+//				   new Llave(13), new Llave(15), new Llave(15), new Llave(19), new Llave(22), new Llave(23),
+//				   new Llave(25), new Llave(27), new Llave(29)};
+//	    
+//	    puertaCerrada = true;
+//	    puertaPrueba.configurarPuerta(datos, 15, 2, 2);
+//	    
+//	    System.out.println ("    PRUEBA NUMERO 2: ");
+//	    
+//	    for (int i = 0; i < 15 && puertaCerrada; i++) {
+//	    	
+//	    	System.out.println ("Se procece a probar la llave " + prueba2[i].getIdLlave());
+//	    	if (!puertaPrueba.probarLlave (prueba2[i])){
+//	    		
+//	    		System.out.println ("Llave no valida"); 
+//	    	}
+//	    	
+//	    	if(puertaPrueba.esPuertaAbierta()) {
+//	    		
+//	    		puertaCerrada = false;
+//	    		System.out.println ("Se ha abierto la puerta");
+//	    	}
+//	    }
+//	    
+//	    puertaPrueba.profundidadYnNodosMinimos();
+//	    
+//	    /** Prueba generica para comprobar el funcionamiento de la puerta.*/
+//	    Llave[] prueba3 = {new Llave(1), new Llave(3), new Llave(5), new Llave(7)};
+//	    
+//	    puertaCerrada = true;
+//	    puertaPrueba.configurarPuerta(datos, 15, 3, 1);
+//	    
+//	    System.out.println ("    PRUEBA NUMERO 3: ");
+//	    
+//		for (int i = 0; i < 4 && puertaCerrada; i++) {
+//						    	
+//			  System.out.println ("Se procece a probar la llave " + prueba3[i].getIdLlave());
+//			   	if (!puertaPrueba.probarLlave (prueba3[i])){
+//			    		
+//			   		System.out.println ("Llave no valida"); 
+//			   	}
+//			    	
+//			   	if(puertaPrueba.esPuertaAbierta()) {
+//			    		
+//			   		puertaCerrada = false;
+//			   		System.out.println ("Se ha abierto la puerta");
+//			   		
+//			   	}
+//		}
+//		
+//		puertaPrueba.profundidadYnNodosMinimos();
+//		
+//		/** Probamos a poner un numero de nodos alto y una profundidad grande.
+//		 * Como dejamos una rama profunda, auqnue queden pcoos nodos la puerta no se abre. */
+//	    Llave[] prueba4 = {new Llave(5), new Llave(9), new Llave(11), new Llave(9), new Llave(13), new Llave(23),
+//				   new Llave(19), new Llave(17), new Llave(21), new Llave(27), new Llave(25), new Llave(29)};
+//	   
+//	    puertaCerrada = true;
+//	    puertaPrueba.configurarPuerta(datos, 15, 3, 10);
+//	    
+//	    System.out.println ("    PRUEBA NUMERO 4: ");
+//	    
+//		for (int i = 0; i < 12 && puertaCerrada; i++) {
+//			
+//			System.out.println ("Se procece a probar la llave " + prueba4[i].getIdLlave());
+//			   	if (!puertaPrueba.probarLlave (prueba4[i])){
+//			    		
+//			   		System.out.println ("Llave no valida"); 
+//			   	}
+//			    	
+//			   	if(puertaPrueba.esPuertaAbierta()) {
+//			    		
+//			   		puertaCerrada = false;
+//			   		System.out.println ("Se ha abierto la puerta");
+//			   		
+//			   	}
+//		}
+//		
+//		puertaPrueba.profundidadYnNodosMinimos();
+//		
+//		/** Prueba generica con profundidad y numero de nodos bajos.*/
+//	    Llave[] prueba5 = {new Llave(1), new Llave(3), new Llave(5), new Llave(7), new Llave(9), new Llave(11),
+//				   new Llave(13), new Llave(15), new Llave(17), new Llave(19), new Llave(21), new Llave(23),
+//				   new Llave(25), new Llave(27), new Llave(29)};
+//	    
+//	    puertaCerrada = true;
+//	    puertaPrueba.configurarPuerta(datos, 15, 1, 2);
+//	    
+//	    System.out.println ("    PRUEBA NUMERO 5: ");
+//	    
+//	    for (int i = 0; i < 12 && puertaCerrada; i++) {
+//	          
+//		  System.out.println ("Se procece a probar la llave " + prueba5[i].getIdLlave());
+//		   	if (!puertaPrueba.probarLlave (prueba5[i])){
+//		    		
+//		   		System.out.println ("Llave no valida"); 
+//		   	}
+//		    	
+//		   	if(puertaPrueba.esPuertaAbierta()) {
+//		    		
+//		   		puertaCerrada = false;
+//		   		System.out.println ("Se ha abierto la puerta");
+//		   		
+//		   	}
+//	    }
+//	    
+//	    puertaPrueba.profundidadYnNodosMinimos();
+//			    
+	}
+	
+	
+	
+
+}

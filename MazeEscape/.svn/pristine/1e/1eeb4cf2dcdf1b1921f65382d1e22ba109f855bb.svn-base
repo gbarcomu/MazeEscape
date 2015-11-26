@@ -1,0 +1,85 @@
+package Robot;
+import EstrucurasDeDatos.Cola;
+import EstrucurasDeDatos.Pila;
+import Otros.Direcciones;
+import Otros.Llave;
+
+
+public abstract class Robots {
+
+	protected String nombreRobot;
+	protected char idRobot;
+	
+	protected Pila <Llave> llavero;
+	
+	protected int posicionX;
+	protected int posicionY;
+	
+	private int turnoRobot;
+	
+	private Cola<Direcciones> rutaRobot;
+	
+	public Robots () {
+		
+		turnoRobot = 0;
+		nombreRobot = "";
+		idRobot = '0';
+		llavero = new Pila<Llave> ();
+	}
+	
+	public Robots (String nombre) {
+		
+		nombreRobot = nombre;
+		llavero = new Pila<Llave> ();
+		
+		rutaRobot = new Cola<Direcciones> ();
+		rutaRobot.encolar(Direcciones.N);
+		rutaRobot.encolar(Direcciones.S);
+		rutaRobot.encolar(Direcciones.S);
+		rutaRobot.encolar(Direcciones.E);
+		rutaRobot.encolar(Direcciones.E);
+			
+	}	
+	
+	public Direcciones siguienteMovimiento () {
+		
+		Direcciones aux = rutaRobot.primero();
+		rutaRobot.desencolar();
+		rutaRobot.encolar(aux);
+		
+		return aux;
+	}
+	
+	public abstract void interactuarPuerta ();
+	
+	public void mover (int posX, int posY) {
+			
+		posicionX = posX;
+		posicionY = posY;
+		
+		System.out.println("El robot" + nombreRobot + "de tipo" + idRobot + "se ha movido");
+	}
+	
+	public abstract void interactuarLlave (Llave llaveAux);
+	
+	public String getNombre() {
+		
+		return nombreRobot;
+	}
+	
+	public void setTurnoRobot(int turno) {
+		
+		turnoRobot = turno;
+	}
+	
+	public int getTurnoRobot() {
+		
+		return turnoRobot;
+	}
+	
+	public void incrementarTurno() {
+		
+		turnoRobot++;
+	}
+}
+

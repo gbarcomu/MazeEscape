@@ -1,0 +1,59 @@
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
+import Laberinto.Sala;
+import Otros.Direcciones;
+import Otros.Llave;
+import Robot.Bender;
+
+
+public class SalaTest {
+
+	Sala sala;
+	Bender b;
+	Direcciones[] dir = {Direcciones.N};
+	Llave llave = new Llave (1);
+	
+	@Before
+	
+	public void inicializar () {
+		
+		b = new Bender ("RobPrueba", 'B', 0, 0, 0);
+		sala = new Sala ();
+	}
+	
+	@Test
+	public void testRobotEntra() {
+		sala.robotEntra(b);
+		assertTrue (sala.hayRobot());
+		sala.robotSale();
+		assertFalse (sala.hayRobot());
+	}
+
+	@Test
+	public void testRepartirLlavesOrdenSala() {
+
+		assertTrue (sala.llaveroVacio());
+		sala.repartirLlavesOrdenSala(llave);
+		assertFalse (sala.llaveroVacio());	
+	}
+
+	@Test
+	public void testRecogerLlaveSala() {
+
+		sala.dejarLlaveSala(llave);
+		assertFalse (sala.llaveroVacio());
+		sala.recogerLlaveSala();
+		assertTrue (sala.llaveroVacio());	
+	}
+
+	@Test
+	public void testDejarLlaveSala() {
+
+		assertTrue (sala.llaveroVacio());
+		sala.dejarLlaveSala(llave);
+		assertFalse (sala.llaveroVacio());	
+	}
+
+}

@@ -1,0 +1,71 @@
+
+public class Laberinto {
+
+	private Pila<Llave> LlavesTotales;
+	private Sala[] SalasLaberinto;
+	private Sala [][] SalasLab;
+	
+	Laberinto () {
+		
+		LlavesTotales = new Pila<Llave>();
+		SalasLaberinto = new Sala[1];
+		
+		Llave aux = new Llave (1);
+		LlavesTotales.apilar(aux);
+		
+		SalasLaberinto[0] = new SalaConPuerta();		
+	}
+	
+	Laberinto (Llave codigoPuerta[], Llave llavesTotales[], Robots robotsTotales[], int numeroDeSalas) {
+
+		SalasLaberinto = new Sala[numeroDeSalas];
+		
+		for (int i = 0; i < numeroDeSalas -1; i++) {
+						
+				SalasLaberinto[i] = new Sala();			
+		}
+		
+		SalasLaberinto[numeroDeSalas -1] = new SalaConPuerta();		
+	}
+	
+	Laberinto(int numSalas,int ancho, int alto) {
+		
+		SalasLab = new Sala [ancho][alto];
+		
+		for (int i = 0; i < ancho -1; i++) {
+			
+			for (int j = 0; j< alto -1; j++) {
+				
+				SalasLab[i][j] = new Sala();
+			}
+			
+		}
+			
+	}
+	public void distribuirLlaves(int [] idSalasConLlave, Llave[] datos) {
+		
+		int pIn = 0; int pfin = 4;
+		
+		for (int k = 0; k <= idSalasConLlave.length; k++) {
+			
+			int aux = idSalasConLlave[k];
+						
+				while (pIn <= pfin & pfin <= 45) {
+					
+					for (int i = pIn; i <= pfin; pIn ++){
+						
+						Sala  sAux =  null;
+						sAux.repartirLlavesOrdenSala(aux,datos[i]);
+					}					
+				}
+				
+				pIn=pfin;
+				pfin =pfin +5;			
+		}
+	}
+	public Sala salaInicioB() {
+		
+		return (SalasLab[0][0]);
+	}
+	
+}

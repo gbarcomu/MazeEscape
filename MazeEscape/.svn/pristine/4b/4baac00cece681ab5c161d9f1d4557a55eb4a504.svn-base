@@ -1,0 +1,35 @@
+package Laberinto;
+
+public class Pared {
+
+	private int sala1;
+	private int sala2;
+	private boolean esVertical;
+	
+	Pared (int sala1, int sala2, boolean esVertical) {
+		
+		this.sala1 = sala1;
+		this.sala2 = sala2;
+		this.esVertical = esVertical;
+	}
+	
+	public int getSala1 () {
+		
+		return sala1;
+	}
+	
+	public int getSala2 () {
+		
+		return sala2;
+	}
+	
+	public boolean esVertical () {
+		
+		return esVertical;
+	}
+	
+	public void mostrar() {
+		
+		System.out.println(sala1 + " " + sala2);
+	}
+}

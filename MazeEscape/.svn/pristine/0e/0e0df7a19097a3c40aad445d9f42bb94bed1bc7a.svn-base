@@ -1,0 +1,49 @@
+package Robot;
+import Otros.Llave;
+
+
+public class RobotRecogedor extends Robots {
+	
+	public RobotRecogedor (char ID, String nombre) {
+	
+		super(nombre);
+		
+		switch (ID) {
+		
+		case 'B':
+			
+			super.idRobot = ID;
+			break;
+			
+		case 'S':
+			
+			super.idRobot = ID;
+			break;
+			
+		case 'P':
+			
+			super.idRobot = ID;
+			break;
+			
+		default :
+			
+			super.idRobot = '0';		
+		}
+	}
+	
+	public void interactuarPuerta () {
+		
+		System.out.println("El robot" + super.nombreRobot + "de tipo" + super.idRobot + 
+				"ha intentado abrir la puerta");
+	}
+
+	public void interactuarLlave () {
+		
+		System.out.println("El robot" + super.nombreRobot + "de tipo" + super.idRobot + 
+				"ha cogido una llave");
+		
+		Llave aux = new Llave (1);
+		
+		llavero.apilar(aux);
+	}	
+}

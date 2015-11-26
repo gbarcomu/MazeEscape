@@ -1,0 +1,172 @@
+package Otros;
+
+import java.util.LinkedList;
+import java.util.Queue;
+
+import EstrucurasDeDatos.Grafo;
+import Laberinto.Laberinto;
+
+public class MovimientoRobots {
+
+	private Queue<Direcciones> colaDir1;
+	private Laberinto lab;
+	private Grafo grf;
+	
+	public MovimientoRobots() {
+		
+		colaDir1 = new LinkedList<Direcciones>();
+		lab = Laberinto.getInstancia();
+		grf = lab.getGrafo();;
+		
+	}
+	
+	public void calcularRutaMinima(int pos) {
+		
+		int idPuerta = lab.devolverSalaConPuerta().getIdSala();
+		
+		while (idPuerta != pos) {
+			
+			int aux;
+			aux = grf.siguiente(pos, idPuerta); 
+			
+			System.out.println(aux);
+			
+			if((pos - aux) > 0) {
+				
+				if((pos - aux) == 1) {
+					
+					colaDir1.add(Direcciones.E);
+				}				
+				else {
+					
+					colaDir1.add(Direcciones.S);
+				}
+			}			
+			else {
+				
+				if((pos - aux) == -1) {
+					
+					colaDir1.add(Direcciones.O);
+				}
+				
+				else {
+					
+					colaDir1.add(Direcciones.N);
+				}
+			}
+			
+			pos = aux;
+		}
+		
+		
+	}
+	
+//	public void calcularRutaManoDerecha(int pos) {
+//		
+//		int idPuerta = lab.devolverSalaConPuerta().getIdSala();
+//		Direcciones aux = Direcciones.N;
+//		
+//		while (idPuerta != pos) {
+//			
+//			aux = siguienteDireccion(aux);
+//			
+//			if(grf.adyacente(pos, pos + 1)) {
+//					
+//				colaDir1.add(Direcciones.E);	
+//			}
+//			else {
+//				
+//				if(grf.adyacente(pos, lab.getMaxColumnas() + 1)){
+//					
+//					colaDir1.add(Direcciones.S);
+//				}
+//				else {
+//					
+//					if(grf.adyacente(pos, pos -1)) {
+//						
+//						colaDir1.add(Direcciones.O);
+//					}
+//					else {
+//						
+//						if(grf.adyacente(pos, lab.getMaxColumnas() - 1)) {
+//							
+//							colaDir1.add(Direcciones.N);
+//						}
+//					}
+//				}
+//			}
+//			
+//		}
+//	
+//	
+//	}
+//	
+//public void calcularRutaManoIzquierda(int pos) {
+//		
+//		int idPuerta = lab.devolverSalaConPuerta().getIdSala();
+//		Direcciones aux = Direcciones.N;
+//		
+//		while (idPuerta != pos) {
+//			
+//			aux = siguienteDireccion(aux);
+//			
+//			if(grf.adyacente(pos, pos - 1)) {
+//					
+//				colaDir1.add(Direcciones.O);	
+//			}
+//			else {
+//				
+//				if(grf.adyacente(pos, lab.getMaxColumnas() + 1)){
+//					
+//					colaDir1.add(Direcciones.S);
+//				}
+//				else {
+//					
+//					if(grf.adyacente(pos, pos + 1)) {
+//						
+//						colaDir1.add(Direcciones.E);
+//					}
+//					else {
+//						
+//						if(grf.adyacente(pos, lab.getMaxColumnas() - 1)) {
+//							
+//							colaDir1.add(Direcciones.N);
+//						}
+//					}
+//				}
+//			}
+//			
+//		}
+//	
+//	
+//	}
+	public Direcciones siguienteDireccion(Direcciones aux) {
+		
+		if(aux == Direcciones.N) {
+			
+			return Direcciones.E;
+		}
+		
+		if(aux == Direcciones.E) {
+			
+			return Direcciones.S;
+		}
+		
+		if(aux == Direcciones.S) {
+			
+			return Direcciones.E;
+		}
+		
+		if(aux == Direcciones.O) {
+			 
+			return Direcciones.N;
+		}
+		return aux;		
+	}
+	public Direcciones siguienteMovimiento() {
+		
+		return colaDir1.poll();
+	}
+	
+	
+}

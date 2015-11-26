@@ -1,0 +1,3 @@
+package Otros;
+
+public enum Direcciones {N,O,S,E}

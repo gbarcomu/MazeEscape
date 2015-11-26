@@ -1,0 +1,63 @@
+package Robot;
+
+import Laberinto.Laberinto;
+import Laberinto.Sala;
+import Laberinto.SalaConPuerta;
+import Otros.Direcciones;
+import Otros.Llave;
+
+
+public class RobotDropeador extends Robots{
+	
+	public RobotDropeador (String nombre, Llave llaveroInicial[], 
+			Direcciones[] direcciones, int maxFil, int maxCol) {
+		
+		super(nombre, maxFil, maxCol, direcciones);
+
+		for (int i = 0; i < llaveroInicial.length; i++) {
+			
+			guardarLlave(llaveroInicial[i]);
+		}
+			
+		super.idRobot = 'A';
+	}
+	
+	public void interactuarPuerta (Laberinto laberinto) {
+		
+		Sala salaAux = laberinto.devovlerSala(posicionX, posicionY);
+		
+		if (salaAux instanceof SalaConPuerta) {
+			
+			Llave llaveroConfiguracion[] = {new Llave(1), new Llave(3), new Llave(5), new Llave(7), new Llave(9), new Llave(11),
+					   new Llave(13), new Llave(15), new Llave(17), new Llave(19), new Llave(21), new Llave(23),
+					   new Llave(25), new Llave(27), new Llave(29)};
+			
+			((SalaConPuerta) salaAux).configurarPuerta(llaveroConfiguracion, 15, 3, 5);
+			
+			System.out.println ("Un robot asimo ha reconfigurado la puerta");
+			
+		}
+		
+		mover(laberinto);
+	}
+
+	public void interactuarLlave (Laberinto laberinto) {
+		
+		Sala salaAux = laberinto.devovlerSala(posicionX, posicionY);
+		
+		if (salaAux.getIdSala() % 2 == 0){
+			
+			if (!llavero.esVacia()) {
+				
+				Llave llaveAux;
+				llaveAux = llavero.getDatoCima();
+				salaAux.dejarLlaveSala(llaveAux);
+				llavero.desapilar();
+			}
+		}
+		
+		System.out.println("El robot " + super.nombreRobot + " de tipo " + super.idRobot + 
+				" ha dejado una llave");
+				
+	}
+}

@@ -1,0 +1,28 @@
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+
+public class SalaTest {
+
+	@Test
+	public void testRobotEntra() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testRepartirLlavesOrdenSala() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testRecogerLlaveSala() {
+		fail("Not yet implemented");
+	}
+
+	@Test
+	public void testDejarLlaveSala() {
+		fail("Not yet implemented");
+	}
+
+}

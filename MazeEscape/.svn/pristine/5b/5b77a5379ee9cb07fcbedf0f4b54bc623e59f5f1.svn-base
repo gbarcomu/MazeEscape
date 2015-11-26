@@ -1,0 +1,39 @@
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import Laberinto.Puerta;
+import Laberinto.SalaConPuerta;
+import Otros.Llave;
+import Robot.Robots;
+
+
+public class RobotRecogedor {
+	
+	RobotRecogedor robAux; 
+	Llave llaveAux; 
+	SalaConPuerta puertaAux; 
+	
+	@Before 
+	
+	public void inicializar() {
+		robAux = new RobotRecogedor();
+		llaveAux = new Llave(1);
+		puertaAux = new SalaConPuerta();
+	}
+	@Test
+	public void testInteractuarPuerta() {
+		
+		puertaAux.ProbarLlave(llaveAux);
+		assertFalse (puertaAux.esPuertaAbierta());
+		
+	}
+
+	@Test
+	public void testRobotHaceSusCosas() {
+		fail("Not yet implemented");
+	}
+}
+
+

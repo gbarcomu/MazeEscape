@@ -1,0 +1,55 @@
+package Otros;
+ /**
+ * Implementación de la clase Llave
+ * @version 2.0
+ * @authores Guillermo Barco Muñoz y Antonio Manuel Fuentes Duarte
+ * Asignatura Desarrollo de Programas<br/>
+ * Curso 14/15
+ * Nombre grupo: IngenierosEnProcesión
+ * Numero de entrega: EC2
+ */
+public class Llave {
+	/**Entero que contiene el identificador de cada llave*/
+	private Integer idLlave;
+	/**Constructor por defecto de la clase llave. Inicializa la llave a 0.*/
+	public Llave () {
+		
+		idLlave = new Integer (0);
+	}
+	/** Constructor parametrizado de la clase llave. Inicializa el idLlave al valor pasado por parámetro.*/
+	public Llave (int id) {
+		
+		this.idLlave = new Integer(id);
+	}
+	/** Método que establece el idLlave.*/
+	public void setIdLlave (Integer id) {
+		
+		this.idLlave = id;
+	}
+	/** Método que obtiene el idLlave.*/
+	public Integer getIdLlave () {
+		
+		return this.idLlave;
+	}
+	/** Método encargado de comparar dos idLlave.*/
+	public int compareTo (Llave datoRaiz) {
+
+		return this.idLlave-datoRaiz.getIdLlave();
+	}
+	/** Método que devuelve verdadero si dos datos son iguales. Devuelve falso en caso contrario.*/
+	public boolean equals (Object datoRaiz) {
+		
+		if (this == datoRaiz) {
+			
+			return true;
+		}
+		
+		if (!(datoRaiz instanceof Llave)) {
+			
+			return false;
+		}
+		
+		Llave aux = (Llave) datoRaiz;
+		return (this.idLlave.equals(aux.getIdLlave()));
+	}
+}

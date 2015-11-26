@@ -1,0 +1,31 @@
+import static org.junit.Assert.*;
+
+import org.junit.Before;
+import org.junit.Test;
+
+
+public class PuertaTest {
+
+	//@Before
+	
+	@Test
+	public void testConfigurarPuerta() {
+		fail("No implementado aun");
+	}
+
+	@Test
+	public void testProbarLlave() {
+		fail("No implementado aun");
+	}
+
+	@Test
+	public void testEsPuertaConfigurada() {
+		fail("No implementado aun");
+	}
+
+	@Test
+	public void testEsPuertaAbierta() {
+		fail("No implementado aun");
+	}
+
+}
